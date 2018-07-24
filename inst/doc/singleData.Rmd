@@ -1,0 +1,124 @@
+---
+title: "Illustration of getHierLevel for finding and selecting groups"
+author: "Julien Chiquet"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Example of a single data set
+
+We consider here a single data with correlated predictors related to a phenotype. 
+
+Let us first load some packages for data generation.
+
+```{r, message=FALSE, warning=FALSE}
+library(SIComORe)
+library(Matrix)
+library(mvtnorm)
+```
+
+## Data generation
+
+### Input matrix of predictors
+
+Now, let us to draw some data: we consider 200 variables spreaded in 3 groups of 30 variables + 110 groups with a single variable. Only groups 1 and 2 will be relevant for the phenotype
+
+```{r}
+p <- 200  # the number of features
+K <- 113  # number of groups 
+## 2 relevants groups with 30 variables
+## 1 irrelevant group with 30 variables
+## 110 irrelevant groups with a single variable
+grp.size <- c(30, 30, 30,rep(1,110))
+```
+
+We draw 100 observation of a Gaussian vector the covariance of which has a block structure faithfull to the original grouping of the variables.
+
+```{r}
+## covariance defined blockwise
+n <- 100
+rhos <- runif(K,.5,.95) # correlation within groups
+Sigma <- bdiag(lapply(1:K, function(k) return(matrix(rhos[k],grp.size[k],grp.size[k]))))
+diag(Sigma) <- 1
+grp <- rep(1:length(grp.size), grp.size)
+X <- scale(rmvnorm(n, sigma=as.matrix(Sigma)))
+```
+
+The matrix of empirical correlation is rather convincing:
+
+```{r}
+image(Matrix(cor(X)))
+```
+
+
+
+### Phenotype/Response vector
+
+The phenotype will be a linear combinason of the *compressed* version of the predictors. Here, we use the mean to compressed the variable which are in the same group:
+
+```{r}
+X.comp <- t(rowsum(t(X), grp)/tabulate(grp))
+```
+
+The vector of regression parameters is sparse, chosen such that the forst two group are predictice:
+
+```{r}
+dim.theta <- ncol(X.comp)
+theta <- rep(0, dim.theta)
+theta[c(1,2)] <- runif(2, min=5, max=10) ## simple effects on the first two groups
+```
+
+Finally, the response vector is drawn from a linear model. The level of noise is such that the $R^2$ is approximately $0.75$.
+
+```{r}
+sigma <- 5
+epsilon <- rnorm(n) * sigma
+epsilon.test <- rnorm(n) * sigma
+y <- X.comp %*% theta + epsilon
+r2 <- 1-sum(epsilon^2) / sum((y-mean(y))^2)
+r2
+```
+
+## Adjusting a single hierarchy
+
+Now, we try to recover the correct level of compression only from the original input matrix and the response vector. We test all the level of a hierarchy obtained by a WARD hierarchical clustering. The grouping is rather obvious in this case: 
+
+### Retreiving a hierarchy 
+
+```{r}
+hierarchy <- hclust(dist(t(scale(X))), method="ward.D2")
+plot(hierarchy)
+```
+
+### Variable selection along the hierarchy
+
+We try the 3 variant available in our package for simultaneously finding and selecting the groups of variables related to the phenotype
+
+```{r}
+out.hcar  <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="hcar")
+out.mlgl  <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="mlgl")
+out.fhcar <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="fast")
+```
+
+The three models show comparable estimated prediction error on the best level of the hierarchy:
+
+```{r}
+library(ggplot2)
+all.cv <- rbind(cbind(out.hcar$cv.error , method="hcar"),
+                cbind(out.fhcar$cv.error, method="fast"),
+                cbind(out.mlgl$cv.error , method="MLGL"))
+print(ggplot(all.cv, aes(x=lambda, y=mean, colour=method, group=method)) + geom_smooth(aes(ymin=mean-sd, ymax=mean+sd), stat="identity") + coord_trans(x="log"))
+```
+
+In terms of variables selections, 
+
+```{r}
+out.mlgl$getGrp()
+out.hcar$getGrp()
+out.fhcar$getGrp()
+```
+
