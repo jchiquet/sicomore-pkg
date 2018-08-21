@@ -47,7 +47,7 @@ getHierLevel <- function(X, y, hierarchy, selection = c("sicomore", "hcar", "mlg
   ## forcing the matrix type for glmnet
   if (!is.matrix(X)) X <- as.matrix(X)
 
-  stopifnot(class(hierarchy) == "hclust")
+  stopifnot(class(hierarchy) %in% c("hclust", "chac"))
 
   if (is.element(1,cut.levels)) {
     message("A cut level of 1 is not allowed: removing it from the list.")
@@ -114,7 +114,7 @@ getHierLevel.sicomore <- function(X, y, hc.object, compression, cut.levels, choi
   ## Adjusting the model
   if (!is.null(mc.cores)) doMC::registerDoMC(cores=mc.cores)
   penalty.factor <- rep(weights[cut.levels],cut.levels)[uniqueIndex]
-  cv <- cv.glmnet(Xcomp, y, penalty.factor = penalty.factor, parallel=!is.null(mc.cores))
+  cv <- glmnet::cv.glmnet(Xcomp, y, penalty.factor = penalty.factor, parallel=!is.null(mc.cores))
 
   ## Extracting the best model
   selected.groups <- predict(cv, s=choice, type="nonzero")[[1]]
@@ -139,7 +139,7 @@ getHierLevel.HCAR <- function(X, y, hc.object, compression, cut.levels, choice, 
   ## recover the grid of penalties used for comparison
   if (!is.null(mc.cores)) doMC::registerDoMC(cores=mc.cores)
   all.cv <- lapply(hierarchy, function(group) {
-    return(cv.glmnet(computeCompressedDataFrame(X, group, compression), y, parallel=!is.null(mc.cores)))
+    return(glmnet::cv.glmnet(computeCompressedDataFrame(X, group, compression), y, parallel=!is.null(mc.cores)))
   })
 
   ## piles up the cv.error of each level of the hierarchy for all lambda
@@ -170,8 +170,8 @@ getHierLevel.MLGL <- function(X, y, hc.object, compression, cut.levels, choice, 
   weights[-(ncol(X)+1  - cut.levels)] <- 0
 
   ## Adjusting the model + cross-validation
-  fit <- MLGL(X, y, hc=hc.object, weightLevel = weights)
-  cv.error <- cv.MLGL(X, y, hc=hc.object, weightLevel = weights)
+  fit <- MLGL::MLGL(X, y, hc=hc.object, weightLevel = weights)
+  cv.error <- MLGL::cv.MLGL(X, y, hc=hc.object, weightLevel = weights)
 
   ## Extracting the best model
   ibest <- switch(choice,
