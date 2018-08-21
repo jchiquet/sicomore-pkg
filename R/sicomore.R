@@ -63,7 +63,7 @@ sicomore <- function(y, X.list,
     if (method.clus[i] == "snpClust") {
       if (ncol(X.list[[i]]) > 600) h <- 600
       else h <- ncol(X.list[[i]])-1
-      hierarchies[[i]] <- snpClust(X.list[[i]], h=h)
+      hierarchies[[i]] <- adjclust::snpClust(X.list[[i]], h=h)
       models[[i]] <- getHierLevel(X.list[[i]], y, hierarchies[[i]], cut.levels = cuts[[i]], compression=compressions[i],
                                   selection=selection, choice=choice[i], depth.cut = depth.cut[i], mc.cores=mc.cores)
     }
