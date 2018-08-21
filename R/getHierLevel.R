@@ -47,7 +47,8 @@ getHierLevel <- function(X, y, hierarchy, selection = c("sicomore", "hcar", "mlg
   ## forcing the matrix type for glmnet
   if (!is.matrix(X)) X <- as.matrix(X)
 
-  stopifnot(class(hierarchy) %in% c("hclust", "chac"))
+  if (class(hierarchy) == "chac") class(hierarchy) <- "hclust"
+  stopifnot(class(hierarchy) == "hclust")
 
   if (is.element(1,cut.levels)) {
     message("A cut level of 1 is not allowed: removing it from the list.")
