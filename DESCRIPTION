@@ -19,7 +19,7 @@ Description: From a set of input matrices and phenotype related to the
 License: GPL>=2
 LazyData: TRUE
 RoxygenNote: 6.0.1
-Imports: glmnet, MLGL, ggplot2, Rdpack, adjclust
+Imports: glmnet, MLGL, ggplot2, Rdpack, adjclust, stabs
 RdMacros: Rdpack
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
