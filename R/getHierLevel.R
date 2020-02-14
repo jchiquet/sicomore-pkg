@@ -178,12 +178,14 @@ getHierLevel.sicomore <- function(X, y, hc.object, compression, cut.levels, choi
 getHierLevel.MLGL <- function(X, y, hc.object, compression, cut.levels, choice, depth.cut, mc.cores, stab, stab.param) {
 
   ## Grimponprez's weights
-  weights <- c(0, sqrt(1/abs(diff(hc.object$height))), 0)
-  weights[-(ncol(X)+1  - cut.levels)] <- 0
+  #weights <- c(0, sqrt(1/abs(diff(hc.object$height))), 0)
+  #weights[-(ncol(X)+1  - cut.levels)] <- 0
 
   ## Adjusting the model + cross-validation
-  fit <- MLGL::MLGL(X, y, hc=hc.object, weightLevel = weights)
-  cv.error <- MLGL::cv.MLGL(X, y, hc=hc.object, weightLevel = weights)
+  #fit <- MLGL::MLGL(X, y, hc=hc.object, weightLevel = weights)
+  fit <- MLGL::MLGL(X, y)
+  #cv.error <- MLGL::cv.MLGL(X, y, hc=hc.object, weightLevel = weights)
+  cv.error <- MLGL::cv.MLGL(X, y)
 
   ## Extracting the best model
   ibest <- switch(choice,
