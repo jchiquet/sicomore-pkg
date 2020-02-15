@@ -31,7 +31,8 @@ sicomore <- function(y,
       else h <- ncol(X.list[[i]])-1
       hierarchies[[i]] <- adjclust::snpClust(X.list[[i]], h=h)
       models[[i]] <- getHierLevel(X.list[[i]], y, hierarchies[[i]], cut.levels = cuts[[i]], compression=compressions[i],
-                                  selection=selection, choice=choice[i], depth.cut = depth.cut[i], mc.cores=mc.cores)
+                                  selection=selection, choice=choice[i], depth.cut = depth.cut[i], mc.cores=mc.cores,
+                                  stab, stab.param = lapply(stab.param, function(x) x[[i]]))
     }
     if (method.clus[i] == "noclust"){
       if (!is.null(mc.cores)) doMC::registerDoMC(cores=mc.cores)
