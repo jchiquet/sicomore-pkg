@@ -28,8 +28,9 @@ sicomore <- function(y,
     }
     if (method.clus[i] == "snpClust") {
       if (ncol(X.list[[i]]) > 600) h <- 600
-      else h <- ncol(X.list[[i]])-1
-      hierarchies[[i]] <- adjclust::snpClust(X.list[[i]], h=h)
+      else h <- ncol(X.list[[i]]) - 1
+      #hierarchies[[i]] <- adjclust::snpClust(X.list[[i]], h=h)
+      hierarchies[[i]] <- BALD::cWard(X.list[[i]], h=h, heaps = TRUE)
       models[[i]] <- getHierLevel(X.list[[i]], y, hierarchies[[i]], cut.levels = cuts[[i]], compression=compressions[i],
                                   selection=selection, choice=choice[i], depth.cut = depth.cut[i], mc.cores=mc.cores,
                                   stab, stab.param = lapply(stab.param, function(x) x[[i]]))
