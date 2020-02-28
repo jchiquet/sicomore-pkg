@@ -2,6 +2,8 @@
 
 export(getHierLevel)
 export(sicomore)
+export(cWard)
+export(gapStatistic)
 exportClasses("sicomore-fit")
 exportClasses("sicomore-model")
 import(MLGL)
