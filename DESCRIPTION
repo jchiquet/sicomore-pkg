@@ -29,7 +29,4 @@ Collate:
     'sicomore-class.R'
     'sicomore-package.R'
     'sicomore.R'
-    'cWHeaps.R'
-    'cWard.R'
-    'cWard_function.R'
-    'gapStatistic.R'
+
