@@ -24,7 +24,9 @@
 #' This argument could be useful if one want to provid a specific hierarchical tree based on taxonomy rather than euclidean distance.
 #' Recommended for those who want to detect genomic-metagenomic interactions.
 #' @param mc.cores an integer for the number of cores to use in the parallelization of the cross-validation and some other functions.
-#'
+#' @param verbose not yet documented
+#' @param stab not yet documented
+#' @param stab.param not yet documented
 #' @return a RC object with class \code{sicomore} with methods \code{plot()}, \code{getSignificance()} and the following fields
 #' \itemize{
 #'  \item{pval:}{A matrix of p-values for each interactions effects between the compressed variables originating from 2 input matrices.}
@@ -71,7 +73,7 @@ sicomore <- function(y,
       if (ncol(X.list[[i]]) > 600) h <- 600
       else h <- ncol(X.list[[i]]) - 1
       #hierarchies[[i]] <- adjclust::snpClust(X.list[[i]], h=h)
-      hierarchies[[i]] <- BALD::cWard(X.list[[i]], h=h, heaps = TRUE)
+      hierarchies[[i]] <- BALD:::cWard(X.list[[i]], h=h, heaps = TRUE)
 
       models[[i]] <- getHierLevel(X.list[[i]], y, hierarchies[[i]], cut.levels = cuts[[i]], compression=compressions[i],
                                   selection=selection, choice=choice[i], depth.cut = depth.cut[i], mc.cores=mc.cores,
@@ -83,7 +85,7 @@ sicomore <- function(y,
 
       if (stab == TRUE){
         stab.lasso <- stabs::stabsel(x = X.list[[i]], y = y, B = 50,
-                              fitfun = glmnet.lasso, cutoff = 0.75,
+                              fitfun = stabs::glmnet.lasso, cutoff = 0.75,
                               PFER = 1, mc.cores = mc.cores)
         groups <- as.numeric(stab.lasso$selected)
         models[[i]] <- new("sicomore-model",

@@ -3,16 +3,24 @@
 \docType{package}
 \name{sicomore}
 \alias{sicomore}
-\alias{sicomore-package}
-\alias{sicomore}
 \title{sicomore}
 \usage{
-sicomore(y, X.list, compressions = rep("mean", length(X.list)),
-  selection = c("sicomore", "hcar", "mlgl"), cuts = lapply(X.list,
-  function(X) unique(round(10^seq(log10(ncol(X)), log10(2), len = 100)))),
-  choice = c("lambda.min", "lambda.min"), method.clus = c("ward.D2",
-  "ward.D2"), depth.cut = c(3, 3), mc.cores = NULL, taxonomy = NULL,
-  verbose = TRUE)
+sicomore(
+  y,
+  X.list,
+  compressions = rep("mean", length(X.list)),
+  selection = c("rho-sicomore", "sicomore", "mlgl"),
+  cuts = lapply(X.list, function(X) unique(round(10^seq(log10(ncol(X)), log10(2), len =
+    100)))),
+  choice = c("lambda.min", "lambda.min"),
+  method.clus = c("ward.D2", "ward.D2"),
+  depth.cut = c(3, 3),
+  mc.cores = NULL,
+  taxonomy = NULL,
+  verbose = TRUE,
+  stab = TRUE,
+  stab.param = list(B = c(100, 100), cutoff = c(0.75, 0.75), PFER = c(1, 1))
+)
 }
 \arguments{
 \item{y}{response variable (phenotype)}
@@ -43,6 +51,12 @@ A value between 3 and 6 is recommended, the smaller the faster.}
 \item{taxonomy}{a hierarchical tree object constructed using taxonomical unit.
 This argument could be useful if one want to provid a specific hierarchical tree based on taxonomy rather than euclidean distance.
 Recommended for those who want to detect genomic-metagenomic interactions.}
+
+\item{verbose}{not yet documented}
+
+\item{stab}{not yet documented}
+
+\item{stab.param}{not yet documented}
 }
 \value{
 a RC object with class \code{sicomore} with methods \code{plot()}, \code{getSignificance()} and the following fields
@@ -59,16 +73,22 @@ a RC object with class \code{sicomore} with methods \code{plot()}, \code{getSign
 \description{
 Selection of Interaction effects in COmpressed  Multiple Omics REpresentation
 
+Selection of Interaction effects in COmpressed  Multiple Omics REpresentation
+
 From a set of input matrices and phenotype related to the same set of individual, sicomore is a two-step method which
 1. find and select groups of correlated variables in each input matrix which are good predictors for the common phenotype
 2. find the most predictive interaction effects between the set of data by testing for interaction between the selected groups of each input matrix
+}
+\section{Functions in sicomore}{
+
+TODO
 }
 
 \references{
 \insertAllCited{}
 }
 \author{
-Julien Chiquet \email{julien.chiquet@inra.fr}
+Julien Chiquet \email{julien.chiquet@inrae.fr}
 
 Florent Guinot \email{fly.guinot@gmail.com}
 

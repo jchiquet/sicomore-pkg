@@ -15,6 +15,8 @@
 #' @param depth.cut an integer specifying the depth of the search space for the variable selection part of the algorithm.
 #' This argument allows to increase the speed of the algorithm by restraining the search space without affecting too much the performance.
 #' A value between 3 and 6 is recommended, the smaller the faster.
+#' @param stab not yet documented
+#' @param stab.param not yet documented
 #' @param mc.cores an integer for the number of cores to use in the parallelization of the cross-validation and some other functions.
 #'
 #' @return a RC object with class 'sicomore-model', with methods \code{nGrp()}, \code{nVar()}, \code{getGrp()}, \code{getVar()}, \code{getCV()}, \code{getX.comp()}, \code{getCoef()} and with the following fields:
@@ -30,6 +32,7 @@
 #' @import glmnet MLGL
 #' @export
 #' @importFrom Rdpack reprompt
+#' @importFrom doMC registerDoMC
 #' @references
 #' \insertAllCited{}
 getHierLevel <- function(X,
@@ -127,7 +130,7 @@ getHierLevel.rhosicomore <- function(X, y, hc.object, compression, cut.levels, c
   if (stab == TRUE){
     stab.lasso <- stabs::stabsel(x = Xcomp, y = y, B = stab.param$B,
                           cutoff = stab.param$cutoff, PFER = stab.param$PFER,
-                          fitfun = glmnet.lasso,
+                          fitfun = stabs::glmnet.lasso,
                           args.fitfun = list(penalty.factor = penalty.factor),
                           mc.cores = mc.cores, sampling.type = "MB")
     selected.groups <- as.numeric(stab.lasso$selected)
@@ -237,7 +240,7 @@ getHierLevel.MLGL <- function(X, y, hc.object, compression, cut.levels, choice, 
   }
   o <- order(variables)
   groups       <- split(variables, fit.group)
-  coefficients <- as.numeric(sparseVector(fit.beta,unique(variables[o]),ncol(X)))
+  coefficients <- as.numeric(Matrix::sparseVector(fit.beta,unique(variables[o]),ncol(X)))
 
   return(list(cv = data.frame(mean=cv.error$cvm, sd=cv.error$cvsd, lambda=cv.error$lambda),
               groups = groups, coefficients = coefficients))

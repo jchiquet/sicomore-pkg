@@ -4,10 +4,19 @@
 \alias{getHierLevel}
 \title{getHierLevel}
 \usage{
-getHierLevel(X, y, hierarchy, selection = c("sicomore", "hcar", "mlgl"),
-  compression = "mean", depth.cut = 3,
+getHierLevel(
+  X,
+  y,
+  hierarchy,
+  selection = c("rho-sicomore", "sicomore", "mlgl"),
+  compression = "mean",
+  depth.cut = 3,
   cut.levels = unique(round(10^seq(log10(ncol(X)), log10(2), len = 100))),
-  choice = c("lambda.min", "lambda.1se"), mc.cores = NULL)
+  choice = c("lambda.min", "lambda.1se"),
+  mc.cores = NULL,
+  stab = FALSE,
+  stab.param = NULL
+)
 }
 \arguments{
 \item{X}{input matrix}
@@ -31,6 +40,10 @@ A value between 3 and 6 is recommended, the smaller the faster.}
 \item{choice}{a string (either "lambda.min" or "lambda.1se"). Indicates how the tuning parameter is chosen in the penalized regression approach}
 
 \item{mc.cores}{an integer for the number of cores to use in the parallelization of the cross-validation and some other functions.}
+
+\item{stab}{not yet documented}
+
+\item{stab.param}{not yet documented}
 }
 \value{
 a RC object with class 'sicomore-model', with methods \code{nGrp()}, \code{nVar()}, \code{getGrp()}, \code{getVar()}, \code{getCV()}, \code{getX.comp()}, \code{getCoef()} and with the following fields:

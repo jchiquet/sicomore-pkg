@@ -11,5 +11,9 @@
 #' @author Christophe Ambroise \email{christophe.ambroise@@genopole.cnrs.fr}
 #'
 #' @docType package
+#' @importFrom stats cutree dist hclust lm median p.adjust pf predict setNames
+#' @importFrom methods new
+#' @importFrom Matrix sparseVector
+#' @importFrom stabs glmnet.lasso stabsel
 #' @name sicomore
 NULL
