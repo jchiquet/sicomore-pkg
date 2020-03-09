@@ -15,9 +15,9 @@ Two vignettes to help use the package are available in the directory /vignettes.
 
 ## Authors
 Christophe Ambroise : christophe.ambroise@genopole.cnrs.fr
-Julien Chiquet : julien.chiquet@inra.fr 
+Julien Chiquet : julien.chiquet@inrae.fr 
 Florent Guinot : guinotflorent@gmail.com
-Marie Szafranski : marie.szafranski@@ath.cnrs.fr
+Marie Szafranski : marie.szafranski@math.cnrs.fr
 
 ## Maintainer
 Florent Guinot : guinotflorent@gmail.com
