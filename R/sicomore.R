@@ -1,3 +1,44 @@
+#' @title sicomore
+#' @description Selection of Interaction effects in COmpressed  Multiple Omics REpresentation
+#'
+#' From a set of input matrices and phenotype related to the same set of individual, sicomore is a two-step method which
+#' 1. find and select groups of correlated variables in each input matrix which are good predictors for the common phenotype
+#' 2. find the most predictive interaction effects between the set of data by testing for interaction between the selected groups of each input matrix
+#'
+#' @param y response variable (phenotype)
+#' @param X.list a list of input matrices. Must have the same number of rows (number of observations). May have different number of columns (predictors)
+#' @param compressions a vector of string for the compression methods for each data sets. Default used the mean to compressed predictors in the same group.
+#' @param method.clus a vector of string specifying the method used for the hierarchical clustering, one for each input matrix in X.list.
+#' By default, the hierarchy is obtain by a WARD clustering on the scaled input matrix.
+#' To use an SNP-specific spatially contrained hierarchical clustering \insertCite{dehman}{SIComORe} from package adjclust, specify "snpClust".
+#' It is also possible to specify no hierarchy with "noclust".
+#' @param selection a string for the method used for variable selection for each data set.
+#' Specify "sicomore" to use the method specifically developed for the package, "hcar" to use the method developped by \insertCite{park;textual}{SIComORe} or
+#' "mlgl" for the method of \insertCite{grimonprez;textual}{SIComORe}.
+#' @param cuts a list of numeric vector defining the cut levels to be considered for each hierarchy. By default a sequence of 100 levels is used.
+#' @param choice a string (either "lambda.min" or "lambda.1se"). Indicates how the tuning parameter is chosen in the penalized regression approach.
+#' @param depth.cut a vector of integers specifying the depth of the search space for the variable selection part of the algorithm.
+#' This argument allows to increase the speed of the algorithm by restraining the search space without affecting too much the performance.
+#' A value between 3 and 6 is recommended, the smaller the faster.
+#' @param taxonomy a hierarchical tree object constructed using taxonomical unit.
+#' This argument could be useful if one want to provid a specific hierarchical tree based on taxonomy rather than euclidean distance.
+#' Recommended for those who want to detect genomic-metagenomic interactions.
+#' @param mc.cores an integer for the number of cores to use in the parallelization of the cross-validation and some other functions.
+#'
+#' @return a RC object with class \code{sicomore} with methods \code{plot()}, \code{getSignificance()} and the following fields
+#' \itemize{
+#'  \item{pval:}{A matrix of p-values for each interactions effects between the compressed variables originating from 2 input matrices.}
+#'  \item{pval.beta1:}{A matrix of p-values for the corresponding main effects of the compressed variables originating from the first input matrix}
+#'  \item{pval.beta2:}{A matrix of p-values for the corresponding main effects of the compressed variables originating from thesecond input matrix}
+#'  \item{models}{A class'sicomore-model' RC object obtain from \code{getHierLevel} function and with methods \code{nGrp()}, \code{nVar()}, \code{getGrp()}, \code{getVar()},
+#'  \code{getCV()}, \code{getX.comp()}, \code{getCoef()}}
+#'  \item{tuplets:}{A list of integer vector specifying the indexes of the compressed variables which are fitted together in a linear model with interaction.}
+#'  \item{dim:} A array of integers specifying the dimension of the compressed matrices.
+#' }
+#' @export
+#' @importFrom Rdpack reprompt
+#' @references
+#' \insertAllCited{}
 sicomore <- function(y,
                      X.list,
                      compressions = rep("mean", length(X.list)),

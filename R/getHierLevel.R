@@ -1,3 +1,37 @@
+#' @title getHierLevel
+#' @description A function to select groups of variables which are good for predicting a given phenotype.
+#' The groups considered corresponds various cut levels in a user defined hierarchy.
+#' The selection is performed by various penalty-based regression methods.
+#'
+#' @param X input matrix
+#' @param y response variable
+#' @param hierarchy the results of a hierarchical clustering algorithm, typically \code{hclust}. Must be an "hclust" object
+#' @param selection a string for the method used for variable selection for each data set.
+#' Specify "sicomore" to use the method specifically developed for the package, "hcar" to use the method developped by \insertCite{park;textual}{SIComORe} or
+#' "mlgl" for the method of \insertCite{grimonprez;textual}{SIComORe}.
+#' @param compression a string (either "mean" or "SNP.dist"). Indicates how the groups of variables are compressed before variable selection at each level of the hierarchy.
+#' @param cut.levels a numeric vector, the level consider in the hierarchy. By default a sequence of 100 levels is used.
+#' @param choice a string (either "lambda.min" or "lambda.1se"). Indicates how the tuning parameter is chosen in the penalized regression approach
+#' @param depth.cut an integer specifying the depth of the search space for the variable selection part of the algorithm.
+#' This argument allows to increase the speed of the algorithm by restraining the search space without affecting too much the performance.
+#' A value between 3 and 6 is recommended, the smaller the faster.
+#' @param mc.cores an integer for the number of cores to use in the parallelization of the cross-validation and some other functions.
+#'
+#' @return a RC object with class 'sicomore-model', with methods \code{nGrp()}, \code{nVar()}, \code{getGrp()}, \code{getVar()}, \code{getCV()}, \code{getX.comp()}, \code{getCoef()} and with the following fields:
+#' \itemize{
+#'  \item{groups:}{a list with the selected groups of predictors}
+#'  \item{coefficients:}{a vector with the estimated coefficients (one per selected group)}
+#'  \item{X.comp:}{The compressed version of the original input matrix (as many columns as number of selected groups)}
+#'  \item{cv.error:}{for the best grouping, a data frame showing the cross-validation error used in the variable selection procedure}
+#'  \item{selection:}{the selection method used}
+#'  \item{compression:}{the compression method used}
+#' }
+#' @include utils.R
+#' @import glmnet MLGL
+#' @export
+#' @importFrom Rdpack reprompt
+#' @references
+#' \insertAllCited{}
 getHierLevel <- function(X,
                          y,
                          hierarchy,
