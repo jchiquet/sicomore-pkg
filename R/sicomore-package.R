@@ -12,7 +12,7 @@
 #'
 #' @docType package
 #' @importFrom stats cutree dist hclust lm median p.adjust pf predict setNames
-#' @importFrom methods new
+#' @importFrom methods new slot
 #' @importFrom Matrix sparseVector
 #' @importFrom stabs glmnet.lasso stabsel
 #' @name sicomore

@@ -73,7 +73,7 @@ sicomore <- function(y,
       if (ncol(X.list[[i]]) > 600) h <- 600
       else h <- ncol(X.list[[i]]) - 1
       #hierarchies[[i]] <- adjclust::snpClust(X.list[[i]], h=h)
-      hierarchies[[i]] <- BALD:::cWard(X.list[[i]], h=h, heaps = TRUE)
+      hierarchies[[i]] <- cWard(X.list[[i]], h=h, heaps = TRUE)
 
       models[[i]] <- getHierLevel(X.list[[i]], y, hierarchies[[i]], cut.levels = cuts[[i]], compression=compressions[i],
                                   selection=selection, choice=choice[i], depth.cut = depth.cut[i], mc.cores=mc.cores,
