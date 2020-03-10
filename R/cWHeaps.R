@@ -16,7 +16,7 @@
   matLD <- .toMatLeft(simMat, p, h)  ## a matrix p x h (with zeros at the bottom) of the LD values
   rCum <- rowCumsums(matLD)  ## p x h matrix
   rcCumLeft <- colCumsums(rCum)  ## p x h matrix
-  
+
   ## sum of the "rectangles" beginning from the right
   matLDright <- .toMatRight(simMat, p, h)
   rotatedMat <- .rotate(.rotate(matLDright))
@@ -24,18 +24,18 @@
   rcCumRight <- colCumsums(rCumRight)  ## p x h matrix
 
   rm(simMat)
-  
+
   if (trace.time) {
     t0 <- Sys.time()
     ts <- 0
   }
-  
+
   ## initialization
-  gains <- rep(0, p-blMin)   
+  gains <- rep(0, p-blMin)
   merge <- matrix(0, nrow=p-blMin, ncol=2)  ## matrix of the merges
   traceW <- matrix(0, nrow=p-blMin, ncol=2)  ## matrix of traceW
   sd1 <- matLD[1:(p-1),1]
-  
+
   ## initialization of the heap
   heap <- as.integer(rep(-1, 3*p))
   lHeap <- length(heap)
@@ -64,8 +64,8 @@
   chainedL[7,1] <- -1
   chainedL[8,p-1] <- -1
   heap <- .buildHeap(heap, D, lHeap)
-  
-  res <- .Call("cWardHeaps", rcCumRight, rcCumLeft, as.integer(h), as.integer(p), chainedL, heap, D, as.integer(lHeap), merge, gains, traceW, as.integer(blMin), PACKAGE="BALD")
+
+  res <- .Call("cWardHeaps", rcCumRight, rcCumLeft, as.integer(h), as.integer(p), chainedL, heap, D, as.integer(lHeap), merge, gains, traceW, as.integer(blMin), PACKAGE="SIComORe")
 
   height <- cumsum(gains)
   tree <- list(traceW=traceW,
@@ -75,7 +75,7 @@
                seqdist = height,
                order = 1:p,
                labels = paste("",1:p),
-               method = "cWard", 
+               method = "cWard",
                call = match.call(),
                dist.method = attr(D, "method"))
   class(tree) <- "hclust"
