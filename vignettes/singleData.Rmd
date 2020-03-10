@@ -1,31 +1,40 @@
 ---
 title: "Illustration of getHierLevel function for finding and selecting relevant groups of variable"
-author: "Florent Guinot"
+author: "SIComORe team"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+link-citations: yes
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{sicomoreSingleData}
   %\VignetteEncoding{UTF-8}
 ---
-```{r message=FALSE, warning=FALSE, include=FALSE}
-load("bench_singleData.R")
-library(microbenchmark)
-# library(latex2exp)
-library(ggplot2)
-library(magrittr)
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  screenshot.force = FALSE, 
+  echo = TRUE,
+  rows.print = 5,
+  message = FALSE, 
+  warning = FALSE)
 ```
 
-# Example of a single data set
+## Preliminaries
 
-We consider here a single data with correlated predictors related to a phenotype. 
+This vignette illustrates SICOMORE for analysis a single data set with correlated predictors related to a phenotype. 
 
-Let us first load some packages for data generation.
-
-```{r, message=FALSE, warning=FALSE}
-library(SIComORe)
+```{r message=FALSE, warning=FALSE, include=FALSE}
+set.seed(1234)
+library(microbenchmark)
 library(Matrix)
+library(cowplot)
+library(ggplot2)
+library(magrittr)
 library(mvtnorm)
+library(SIComORe)
 ```
 
 ## Data generation
@@ -114,7 +123,7 @@ plot(hierarchy)
 We try the 3 available options in our package for simultaneously finding and selecting the groups of variables related to the phenotype:
 
 ```{r}
-out.hcar  <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="hcar", mc.cores=NULL)
+out.rho  <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="rho-sicomore", mc.cores=NULL)
 out.mlgl  <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="mlgl", mc.cores=NULL)
 out.sicomore <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="sicomore", mc.cores=NULL)
 ```
@@ -122,7 +131,7 @@ out.sicomore <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="si
 The three models show comparable estimated prediction error on the best level of the hierarchy:
 
 ```{r, fig.width=7, warning=FALSE}
-all.cv <- rbind(cbind(out.hcar$cv.error , method="hcar"),
+all.cv <- rbind(cbind(out.rho$cv.error , method="rho-sicomore"),
                 cbind(out.sicomore$cv.error, method="sicomore"),
                 cbind(out.mlgl$cv.error , method="mlgl"))
 all.cv %>% 
@@ -136,18 +145,19 @@ In terms of variables selections,
 
 ```{r}
 out.mlgl$getGrp()
-out.hcar$getGrp()
+out.rho$getGrp()
 out.sicomore$getGrp()
 ```
 
 ## Comparison of computation time between the 3 options:
 
-```{r eval=FALSE, message=FALSE, warning=FALSE, include=TRUE}
+```{r, message=FALSE, warning=FALSE, include=TRUE}
+RHO      <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="rho-sicomore", mc.cores=NULL))
 SICOMORE <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="sicomore", mc.cores=NULL))
-MLGL <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="mlgl", mc.cores=NULL))
-HCAR <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="hcar", mc.cores=NULL))
-bench <- microbenchmark(eval(SICOMORE) , eval(MLGL), eval(HCAR), times = 50)
+MLGL     <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="mlgl", mc.cores=NULL))
+bench    <- microbenchmark(eval(RHO), eval(SICOMORE) , eval(MLGL), times = 5)
 ```
+
 ```{r,fig.width=7}
 autoplot(bench)
 ```

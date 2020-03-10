@@ -1,36 +1,49 @@
+---
 title: "Illustration of sicomore function to detect interactions between 2 datasets"
-author: "Florent Guinot"
+author: "SIComORe team"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+link-citations: yes
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{sicomoreTwoData}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  screenshot.force = FALSE, 
+  echo = TRUE,
+  rows.print = 5,
+  message = FALSE, 
+  warning = FALSE)
+```
+
+## Preliminaries
+
+This vignette illustrates SICOMORE for analysis two interacting data sets. 
+
 ```{r message=FALSE, warning=FALSE, include=FALSE}
-load("bench.R")
+set.seed(1234)
 library(microbenchmark)
-#library(latex2exp)
+library(Matrix)
 library(cowplot)
 library(ggplot2)
 library(magrittr)
-```
-# Data sets generations
-
-Let us first load the package plus some basic functions for data generation that can be found in the "inst" directory.
-
-```{r, message=FALSE, warning=FALSE}
-set.seed(1234)
-library(SIComORe)
-library(Matrix)
 library(mvtnorm)
+library(SIComORe)
 ```
 
-## Input Matrices generations
+## Data sets generations
 
-This goes pretty much just like in the example on an single data set (see the corresponding vignette), but two data set are required. The sample size is common to both data sets:
+### Input Matrices generations
 
-```{r}
+Data generation goes pretty much just like in the example on an single data set (see the corresponding vignette), but two data sets are required. The sample size is common to both data sets:
+
+```{r sample size}
 n <- 100
 ```
 
@@ -141,8 +154,7 @@ theta.true <- reshape2::melt(theta.full) %>%
   scale_fill_gradient2(high = "grey40") +
   theme_minimal() +
   ggtitle("Matrix of true interactions") +
-  labs(x = TeX('Variables in $\\mathbf{X}_1$'), y = TeX('Variables in $\\mathbf{X}_2$$')) +
-  coord_fixed()
+  labs(x = 'Variables in X_1', y = 'Variables in X') + coord_fixed()
 theta.estimated <- res$plot(main="Estimated matrix of interactions", threshold=.05)
 cowplot::plot_grid(theta.estimated,theta.true, ncol=2)
 ```
@@ -172,13 +184,13 @@ And let us compare the 3 options in `selection`:
 ```{r message=FALSE, warning=FALSE}
 out.sicomore <- sicomore(y, list(X1, X2), selection="sicomore", verbose = FALSE)
 out.mlgl <- sicomore(y, list(X1, X2), selection="mlgl", verbose = FALSE)
-out.hcar <- sicomore(y, list(X1, X2), selection="hcar", verbose = FALSE)
+out.rho <- sicomore(y, list(X1, X2), selection="rho-sicomore", verbose = FALSE)
 ```  
 
 We compute the matrix of interactions effects with the method `getSignificance(effect = "theta")` for each option:
 ```{r message=FALSE, warning=FALSE}
 theta.mlgl <- out.mlgl$getSignificance(effect = "theta")
-theta.hcar <- out.hcar$getSignificance(effect = "theta")
+theta.rho <- out.rho$getSignificance(effect = "theta")
 theta.sicomore <- out.sicomore$getSignificance(effect = "theta")
 ```
 
@@ -191,10 +203,10 @@ res.sicomore <- sapply(seq.thres, function(threshold) getSelPerf(theta.sicomore>
 res.mlgl <- sapply(seq.thres, function(threshold) getSelPerf(theta.mlgl>=threshold, theta.full)) %>%
   t() %>%
   data.frame()
-res.hcar <- sapply(seq.thres, function(threshold) getSelPerf(theta.hcar>=threshold, theta.full)) %>%
+res.rho <- sapply(seq.thres, function(threshold) getSelPerf(theta.rho>=threshold, theta.full)) %>%
   t() %>%
   data.frame()
-res.df <- data.frame(method = rep(c("sicomore","mlgl","hcar"), each = 100), rbind(res.sicomore, res.mlgl, res.hcar))
+res.df <- data.frame(method = rep(c("sicomore","mlgl","rho-sicomore"), each = 100), rbind(res.sicomore, res.mlgl, res.rho))
 res.df %>% 
   ggplot(aes(x = fallout, y = recall, color = method)) + 
   geom_line()
@@ -202,12 +214,13 @@ res.df %>%
 
 ## Comparison of computation time between the 3 options:
 
-```{r eval=FALSE, message=FALSE, warning=FALSE, include=TRUE}
+```{r message=FALSE, warning=FALSE}
 SICOMORE <- expression(sicomore(y, list(X1, X2), selection="sicomore", verbose=FALSE))
-MLGL <- expression(sicomore(y, list(X1, X2), selection="mlgl", verbose=FALSE))
-HCAR <- expression(sicomore(y, list(X1, X2), selection="hcar", verbose=FALSE))
-bench <- microbenchmark(eval(SICOMORE) , eval(MLGL), eval(HCAR), times = 50)
+MLGL     <- expression(sicomore(y, list(X1, X2), selection="mlgl", verbose=FALSE))
+RHO      <- expression(sicomore(y, list(X1, X2), selection="rho-sicomore", verbose=FALSE))
+bench <- microbenchmark(eval(SICOMORE) , eval(MLGL), eval(RHO), times = 5)
 ```
+
 ```{r,fig.width=7}
 autoplot(bench)
 ```
