@@ -2,7 +2,7 @@ Package: SIComORe
 Type: Package
 Title: Selection of Interaction effects in COmpressed Multiple Omics
     REpresentation
-Version: 0.1.1
+Version: 0.2.0-9000
 Author: Authors@R: as.person(c(
     "Christophe Ambroise <christophe.ambroise@genopole.cnrs.fr> [aut]",
     "Julien Chiquet <julien.chiquet@inrae.fr> [aut, cre]", 
@@ -22,6 +22,7 @@ License: GPL (>= 2)
 LazyData: TRUE
 RoxygenNote: 7.0.2
 RdMacros: Rdpack
+biocViews:
 Imports: 
   glmnet,
   Matrix,
@@ -30,12 +31,15 @@ Imports:
   ggplot2,
   Rdpack,
   doMC,
+  snpStats,
+  matrixStats,
   adjclust,
   stabs
 Suggests: 
   knitr,
   rmarkdown,
   tidyverse,
+  reshape2,
   cowplot,
   mvtnorm,
   microbenchmark,

@@ -17,5 +17,7 @@
 #' @importFrom Matrix sparseVector
 #' @importFrom stabs glmnet.lasso stabsel
 #' @importFrom utils head tail
+#' @importFrom snpStats ld
+#' @importFrom matrixStats rowCumsums colCumsums
 #' @name sicomore
 NULL

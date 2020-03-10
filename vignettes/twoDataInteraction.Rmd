@@ -30,6 +30,7 @@ This vignette illustrates SICOMORE for analysis two interacting data sets.
 set.seed(1234)
 library(microbenchmark)
 library(Matrix)
+library(reshape2)
 library(cowplot)
 library(tidyverse)
 library(mvtnorm)
