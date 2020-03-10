@@ -35,6 +35,10 @@ Imports:
 Suggests: 
   knitr,
   rmarkdown,
+  tidyverse,
+  cowplot,
+  mvtnorm,
+  microbenchmark,
   pkgdown
 VignetteBuilder: knitr
 Collate: 
