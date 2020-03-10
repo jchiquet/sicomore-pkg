@@ -57,7 +57,7 @@ sicomore.fit <-
                        scale_fill_gradient2(low = "grey60", high = "grey40") +
                        theme_minimal()+ # minimal theme
                        ggtitle(main) +
-                       labs(x = TeX('Variables in $\\mathbf{X}_1$'), y = TeX('Variables in $\\mathbf{X}_2$$')) +
+                       labs(x = 'Variables in X_1', y = 'Variables in X_2') +
                        coord_fixed()
 
                    }

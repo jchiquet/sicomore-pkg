@@ -15,5 +15,6 @@
 #' @importFrom methods new slot
 #' @importFrom Matrix sparseVector
 #' @importFrom stabs glmnet.lasso stabsel
+#' @importFrom utils head tail
 #' @name sicomore
 NULL
