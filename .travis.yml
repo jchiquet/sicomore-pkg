@@ -21,10 +21,10 @@ bioc_packages:
 
 matrix:
   include:
-    - os: osx
-      r: release
-    - os: osx
-      disable_homebrew: true
+#    - os: osx
+#      r: release
+#    - os: osx
+#      disable_homebrew: true
     - os: linux
       r: devel
     - os: linux
