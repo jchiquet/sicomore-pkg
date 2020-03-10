@@ -12,7 +12,7 @@ Author: Authors@R: as.person(c(
   ))
 Maintainer: <julien.chiquet@inrae.fr>
 Description: From a set of input matrices and phenotype related to the
-    same set of individual, sicomore is a two-step method which 
+    same set of individual, sicomore <arxiv:1810.12169> is a two-step method which 
     1) finds and select groups of correlated variables in each input matrix
     which are good predictors for the common phenotype; and 2) finds the most
     predictive interaction effects between the set of data by testing for
