@@ -1,0 +1,44 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+# Travis CI for automatic building.
+#
+# Changelog:
+#  - 2020-03-10: creation
+
+language: R
+cache: packages
+
+r_check_args: --as-cran
+sudo: required
+
+warnings_are_errors: false
+
+use_bioc: true
+bioc_required: true
+
+bioc_packages:
+  - snpStats
+
+matrix:
+  include:
+    - os: osx
+      r: release
+    - os: osx
+      disable_homebrew: true
+    - os: linux
+      r: devel
+    - os: linux
+      r: release
+      r_packages:
+        - pkgdown
+      after_success:
+        - R CMD INSTALL .
+        - Rscript -e 'pkgdown::build_site()'
+      deploy:
+        - provider: pages
+          skip-cleanup: true
+          github-token: $GITHUB_PAT
+          keep-history: true
+          local-dir: docs
+          on:
+            branch: master

@@ -1,3 +1,5 @@
+[![Travis build status](https://travis-ci.org/jchiquet/sicomore-pkg.svg?branch=master)](https://travis-ci.org/jchiquet/sicomore-pkg)
+
 # SIComORe
 Selection of Interaction effects in COmpressed Multiple Omics REpresentation
 
