@@ -1,6 +1,6 @@
 Package: SIComORe
 Title: Selection of Interaction effects in COmpressed Multiple Omics REpresentation
-Version: 0.2.1
+Version: 0.2.1-9000
 Authors@R: c(
     person("Christophe", "Ambroise", role = "aut", email = "christophe.ambroise@genopole.cnrs.fr"),
     person("Julien", "Chiquet", role = c("aut", "cre"), email = "julien.chiquet@inrae.fr",
