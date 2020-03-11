@@ -5,7 +5,7 @@ templates:
     bootswatch: readable
 
 navbar:
-  title: "SIComORe"
+  title: "SIComORe:"
   type: inverse
   left:
     - icon: fa-home
@@ -15,9 +15,9 @@ navbar:
       href: "reference/index.html"
     - text: "Vignettes"
       menu:
-      - text: "Analysis of single data set"
+      - text: "Analysis of a single data set"
         href: articles/singleData.html
-      - text: "Analysis of Interacting Data sets"
+      - text: "Analysis of two onteracting data sets"
         href: articles/twoDataInteraction.html
     - text: "Changelog"
       href: news/index.html
