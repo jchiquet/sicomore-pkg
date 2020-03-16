@@ -10,7 +10,7 @@
 }
 
 simR2 <- structure(function( #Calculation of the \eqn{r^2} linkage disequilibrium measure
-### This function returns the pairs of \eqn{r^2} LD measures between each column of \eqn{X[,i]} and each column of \eqn{X[,j]}. If i and j are not provided, this function returns a vector of the \eqn{p-1} \eqn{r^2} LD measures between the adjacent columns of X. 
+### This function returns the pairs of \eqn{r^2} LD measures between each column of \eqn{X[,i]} and each column of \eqn{X[,j]}. If i and j are not provided, this function returns a vector of the \eqn{p-1} \eqn{r^2} LD measures between the adjacent columns of X.
                             X,
 ### genotype matrix coded in {1, 2, 3} with the SNPs in columns.
                             i,
@@ -30,7 +30,7 @@ simR2 <- structure(function( #Calculation of the \eqn{r^2} linkage disequilibriu
   } else {
     res <- ld(X[,i], X[,j], stats=stats)
   }
-  ##value<< If \code{i} and \code{j} are provided, a \code{l_1 x l_2} matrix of the \eqn{r^2} LD measures is returned. Else, a (p-1) vector of the \eqn{r^2} LD measures between the adjacent columns of X is returned.  
+  ##value<< If \code{i} and \code{j} are provided, a \code{l_1 x l_2} matrix of the \eqn{r^2} LD measures is returned. Else, a (p-1) vector of the \eqn{r^2} LD measures between the adjacent columns of X is returned.
   res
   ##seealso<< \code{\link{simDp}}, \code{\link{cWard}}.
   ##references<< B. Devlin and N. Risch. A comparison of linkage disequilibrium measures for fine-scale mapping. Genomics, 29(2):311-322, 1995.
@@ -57,7 +57,7 @@ simR2 <- structure(function( #Calculation of the \eqn{r^2} linkage disequilibriu
 
 simDp <- structure(function( #Calculation of the \eqn{D'} linkage disequilibrium measure
 ### This function return the pairs of \eqn{D'} LD measures between each column of \eqn{X[,i]} and each column of \eqn{X[,j]}. If i and j are not provided, this function returns
-###a vector of the \eqn{p-1} \eqn{D'} LD measures between the adjacent columns of X.                
+###a vector of the \eqn{p-1} \eqn{D'} LD measures between the adjacent columns of X.
                             X,
 ### genotype matrix coded in {1, 2, 3} with the SNPs in columns.
                             i,
@@ -78,7 +78,7 @@ simDp <- structure(function( #Calculation of the \eqn{D'} linkage disequilibrium
   } else {
     res <- ld(X[,i], X[,j], stats=stats)
   }
-  ##value<< If \code{i} and \code{j} are provided, a \code{l_1 x l_2} matrix of the \eqn{D'} LD measures is returned. Else, a (p-1) vector of the \eqn{D'} LD measures between the adjacent columns of X is returned.  
+  ##value<< If \code{i} and \code{j} are provided, a \code{l_1 x l_2} matrix of the \eqn{D'} LD measures is returned. Else, a (p-1) vector of the \eqn{D'} LD measures between the adjacent columns of X is returned.
   res
   ##seealso<< \code{\link{simR2}}, \code{\link{cWard}}.
   ##references<< B. Devlin and N. Risch. A comparison of linkage disequilibrium measures for fine-scale mapping. Genomics, 29(2):311-322, 1995.
@@ -160,13 +160,13 @@ simDp <- structure(function( #Calculation of the \eqn{D'} linkage disequilibrium
   } else if (length(j)==1) {
     s <- sim(X, j, seq(i1, max(i0, j1-h)))
     ind <- which(is.na(s), arr.ind=TRUE)
-    browser("NA generated", expr=length(ind)!=0)    
+    browser("NA generated", expr=length(ind)!=0)
     somme <- sum(s)
   } else {  ## (only happens if h is small ?)
     if (flavor=="v1") {
       d1 <- max(j0-h, i0)
       f2 <- min(j1, i1+h)
-      
+
       if ( (d1 == (j0-h)) && (f2 == (i1 + h)) ) {
         ## 1 triangle
         somme1 <- 0
@@ -190,7 +190,7 @@ simDp <- structure(function( #Calculation of the \eqn{D'} linkage disequilibrium
         }
         somme <- somme1 + sum(sim(X, d1:i1, seq(j0, i0+h-1, by=1)))
       } else {
-        ## ( (d1 == i0) && (f2 == j1) )  
+        ## ( (d1 == i0) && (f2 == j1) )
         ## 1 triangle + 3 rectangles
         somme1 <- 0
         for (kk in 0:(j1-h-i0)){
@@ -209,7 +209,7 @@ simDp <- structure(function( #Calculation of the \eqn{D'} linkage disequilibrium
       iTri <- seq(m0, m1)
       jTri <- iTri+h
       matTri <- sim(X, iTri, jTri)
-      sumTri <- sum(matTri[!upper.tri(matTri)])   
+      sumTri <- sum(matTri[!upper.tri(matTri)])
 
       sumR <- 0
       ## rectangle #1
@@ -218,7 +218,7 @@ simDp <- structure(function( #Calculation of the \eqn{D'} linkage disequilibrium
         matR <- sim(X, iTri, jR)
         sumR <- sumR + sum(matR)
       }
-      
+
       ## rectangle #2
       if (j1-h<i1) {
         iR <- seq(m1+1, i1)
@@ -284,16 +284,16 @@ simDp <- structure(function( #Calculation of the \eqn{D'} linkage disequilibrium
     stop ("A buffer SNP has been merged !")
   }
   if (j0==2) {
-    S2 <- .sommeh(classes[[j0]], classes[[j0+2]], X, h, sim, flavor) 
+    S2 <- .sommeh(classes[[j0]], classes[[j0+2]], X, h, sim, flavor)
     Sdiag1[j0] <- Sdiag1[j0+1] + S2
     Sdiag1[j0-1] <- -Inf  ## not required
   } else if (j0==(l-1)) {
-    S1 <- .sommeh(classes[[j0-1]], classes[[j0+1]], X, h, sim, flavor) 
+    S1 <- .sommeh(classes[[j0-1]], classes[[j0+1]], X, h, sim, flavor)
     Sdiag1[j0-1] <- Sdiag1[j0-1] + S1
     Sdiag1[j0] <- -Inf
   } else {
-    S1 <- .sommeh(classes[[j0-1]], classes[[j0+1]], X, h, sim, flavor) 
-    S2 <- .sommeh(classes[[j0]], classes[[j0+2]], X, h, sim, flavor) 
+    S1 <- .sommeh(classes[[j0-1]], classes[[j0+1]], X, h, sim, flavor)
+    S2 <- .sommeh(classes[[j0]], classes[[j0+2]], X, h, sim, flavor)
     Sdiag1[j0-1] <- Sdiag1[j0-1] + S1
     Sdiag1[j0] <- Sdiag1[j0+1] + S2
   }
@@ -301,35 +301,35 @@ simDp <- structure(function( #Calculation of the \eqn{D'} linkage disequilibrium
   return(Sdiag1)
 }
 .cWardOld <- function(X, p, blMin, h, sim, flavor, trace.time){
- 
+
   if (trace.time) {
     t0 <- Sys.time()
     ts <- 0
   }
   ## initialization
   step <- 0
-  gains <- rep(0, p-blMin)   
+  gains <- rep(0, p-blMin)
   classes <- as.list(0:(p+1))
-  l <- length(classes) ## p + 2 buffer snps 
+  l <- length(classes) ## p + 2 buffer snps
   merge <- matrix(0, nrow=p-blMin, ncol=2)  ## matrix of the merges
   labels <- seq(-1, -(p+1), by=-1)  ## vector of the labels (same length as G)
   trW <- numeric(p-blMin-1)  ## vector of trace(W)
-  
+
   if (FALSE) {  ## too slow
     sd1 <- sapply(1:(p-1), function(ii) sim(X, ii, ii+1))
   } else {
     sd1 <- sim(X)
   }
-  
+
   Sdiag1 <- c(-Inf, sd1, -Inf)
 
   Sdiag <- rep(1, p+2)  ## p + 2 buffer snps
   D <- 1-Sdiag1
   gains[step] <- min(D)
-  
+
   steps <- 1:(p-2)
   for (step in steps) {
-    
+
     if (trace.time) {
       td <- as.numeric(Sys.time()-t0, units="secs")  ## time difference in seconds
       ts <- c(ts, td)
@@ -350,15 +350,15 @@ simDp <- structure(function( #Calculation of the \eqn{D'} linkage disequilibrium
     idxs <- c(2:(length(classes)-1))  ## indices of non-buffer SNPs
     weights <-  1/sapply(classes, length)
     trW[step] <- sum(Sdiag[idxs]*weights[idxs])
-    
+
     merge[step,] <- c(labels[j0-1], labels[j0])  ## the first buffer snp !!!
     labels <- .majLabels(j0-1, labels, step)
   }
-  
+
   traceW <- cbind(rev(p-steps), rev(p-trW))
   traceW1 <- p - ((sum(Sdiag)-2+2*Sdiag1[2])/p)     ## step "p-1": all the SNPs in a single class; Take care of the buffer snps + the unique term of Sdiag1 !!!
   traceW <- rbind(c(1, traceW1), traceW)
-  
+
   ## merging the remaining 2 classes
   j0 <- 2
   step <- step+1
@@ -366,7 +366,7 @@ simDp <- structure(function( #Calculation of the \eqn{D'} linkage disequilibrium
   classes <- .majClasses(2, classes)
   merge[step, ] <-  c(labels[j0-1], labels[j0])
   labels <- .majLabels(j0-1, labels, step)
-  
+
   height <- cumsum(gains)
   tree <- list(traceW=traceW,
                gains=gains,
@@ -375,7 +375,7 @@ simDp <- structure(function( #Calculation of the \eqn{D'} linkage disequilibrium
                seqdist = height,
                order = 1:p,
                labels = paste("",1:p),
-               method = "cWard", 
+               method = "cWard",
                call = match.call(),
                dist.method = attr(D, "method"))
   class(tree) <- "hclust"
@@ -409,11 +409,11 @@ cWard <- structure(function( #Constrained Hierarchical Clustering using the LD s
                             ){
   p <- ncol(X)
   stopifnot(h <= p-1)
-  
+
   if (class(X)!="SnpMatrix"){
     X <- .snpM(X)
   }
-  
+
   if (heaps==TRUE){
     if (identical(sim, simR2)){
       LDsim <- "R.squared"
@@ -421,14 +421,14 @@ cWard <- structure(function( #Constrained Hierarchical Clustering using the LD s
     else if (identical(sim, simDp)){
       LDsim <- "D.prime"
     }
-    tree <- .cWHeaps(X=X, p=p, h=h, blMin=blMin, LDsim=LDsim, trace.time=trace.time)  
+    tree <- .cWHeaps(X=X, p=p, h=h, blMin=blMin, LDsim=LDsim, trace.time=trace.time)
   }
   else {
     tree <- .cWardOld(X=X, p=p, blMin=blMin, h=h, sim=sim, flavor=flavor, trace.time=trace.time)
   }
   ##value<< An object of class \code{hclust} which describes the tree produced by the clustering process. The \code{(p-1) x 2} matrix of the within dispersion measures \eqn{W_k} at each step k of the clustering are also added to the returned list.
   return(tree)
- 
+
   ##references<< D. Clayton. snpStats: SnpMatrix and XSnpMatrix classes and methods, 2013. R package version 1.12.0.
   ##references<< J. H. Ward Jr. Hierarchical grouping to optimize an objective function. Journal of the American statistical association, 58(301):236-244, 1963.
   ##seealso<< \code{\link{gapStatistic}}, \code{\link{select}}.
@@ -457,8 +457,8 @@ cWard <- structure(function( #Constrained Hierarchical Clustering using the LD s
   struct.Dp <- cWard(Z, sim=simDp)
   par(mfrow=c(1,2))
   plot(unstruct.R2, main="Unstructured data")
-  ## the underlying structure can be observed in the dendrogram 
-  plot(struct.R2, main="Structured data")     
+  ## the underlying structure can be observed in the dendrogram
+  plot(struct.R2, main="Structured data")
 
   groups <- betas$betaMat[,"groups"]
   nBlocks <- max(groups)
@@ -468,7 +468,7 @@ cWard <- structure(function( #Constrained Hierarchical Clustering using the LD s
   names(groupsDp) <- NULL
   identical(groups, as.numeric(groupsDp))   ## not always TRUE if corr<0.5 !
   identical(groups, as.numeric(groupsR2))  ## not always TRUE if corr<0.5 !
-  
+
 })
 
 

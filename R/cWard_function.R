@@ -1,11 +1,12 @@
 ## x : the LD matrix
 .toMatLeft <- function(x, p, h) {
-  x <- slot(t(x), "x")
+  #x <- slot(t(x), "x") # we now send a symmetric matrix from LD, so no transposition is needed
+  x <- slot(x, "x")
   stopifnot(length(x)==(p-1)*h-h*(h-1)/2)
   x1 <- head(x, (p-1)*h-h*(h-1))
   m1 <- matrix(x1, ncol=h, byrow=TRUE)
   x2 <- tail(x, h*(h-1)/2)
-  m2t <- matrix(nrow=h, ncol=h-1)
+  m2t <- matrix(nrow = h, ncol = h-1)
   idxs <- seq(along=x2)
   for (jj in 1:(h-1)) {
     idxsJJ <- head(idxs, h-jj)
@@ -14,7 +15,7 @@
   }
   mat <- rbind(m1, t(m2t), NA)
   mat[is.na(mat)] <- 0
-  return(mat)
+  mat
 }
 
 ## x : the LD matrix

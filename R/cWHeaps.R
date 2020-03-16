@@ -7,7 +7,7 @@
 ###########################################
 
 .cWHeaps <- function(X, p, h, blMin, LDsim, trace.time){
-  LD <- ld(X, depth=h, stats=LDsim)
+  LD <- ld(X, depth=h, stats=LDsim, symmetric = TRUE)
   .cWLD(LD, p=p, h=h, blMin=blMin, trace.time=trace.time)
 }
 
