@@ -1,11 +1,13 @@
 ---
-title: "Illustration of getHierLevel function for finding and selecting relevant groups of variable"
+title: "Analysis of a single Data set with SIComORe"
+subtitle: "Finding a relevant group structure to predict a phenotype"
 author: "SIComORe team"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
     toc: true
     toc_depth: 3
+bibliography: references/biblio.bib
 link-citations: yes
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
@@ -22,141 +24,153 @@ knitr::opts_chunk$set(
   warning = FALSE)
 ```
 
-## Preliminaries
 
-This vignette illustrates SICOMORE for analysis a single data set with correlated predictors related to a phenotype. 
+This vignette illustrates how SIComORe can be used for the analysis of a single data set with correlated predictors related to a phenotype. 
 
-```{r message=FALSE, warning=FALSE, include=FALSE}
+## Requirements
+
+On top of `SIComORe`, this will require a couple of standard packages tailored for data manipulation, representation or benchmarking:
+
+```{r requirements,  message=FALSE, warning=FALSE}
 set.seed(1234)
-library(microbenchmark)
-library(Matrix)
-library(cowplot)
-library(tidyverse)
-library(mvtnorm)
 library(SIComORe)
+library(tidyverse)
+library(corrplot)
+library(cowplot)
+library(microbenchmark)
+library(mvtnorm)
+library(Matrix)
 ```
+
+## Statistical Model
+
+SIComORe assumes an underlying linear model to link a phenotype (or response) of interest to a set several matrices of correlated predictors (see @sicomore). In the case at hand, we only consider a single matrix thus the generative model is
+
+\begin{equation*}
+  \mathbf{y} = \sum_{g \in \mathcal{G}} \phi( \mathbf{X}_{g}) \boldsymbol\theta_g + \boldsymbol\varepsilon, \qquad \boldsymbol\varepsilon \sim \mathcal{N}(\mathbf{0}_n, \mathbf{I}_n \sigma^2),
+\end{equation*}
+where
+
+  - $\mathbf{y}$ is a vector of phenotype $n$ observation,
+  - $\boldsymbol\varepsilon$ is a size-$n$ Gaussian vector of noise,
+  - $\mathbf{X}$ is a matrix of predictors with $n$ rows and $p$ columns,
+  - $\mathcal{G}$ is a latent group structure with $K$ groups,
+  - $\phi$ is a function (typically the mean "in row") for compressing $\mathbf{X}_g$ into a vector,
+  - $\boldsymbol\theta$ is a vector withg $K$ coefficients (one per group).
+  
+SIComORe includes the function `getHierLevel` to estimate both the underlying group structure $\mathcal{G}$ and the vector of regression $\boldsymbol\theta$ from the data $(\mathbf{y},\mathbf{X})$. We detail its use on a simulated example bellow.
 
 ## Data generation
 
-### Input matrix of predictors
+### Group-structured Matrix of predictors
 
-Now, let us to draw some data: we consider 200 variables spreaded in 3 groups of 30 variables + 110 groups with a single variable. Only groups 1 and 2 will be relevant for the phenotype
+We define a matrix of predictors $\mathbf{X}$ containing $p = 200$ columns (or variables) spreaded into a structure pf group $\mathcal{G} = \{g_k,k=1,\dots,K\}$ with $K = 113$ groups: 3 groups of 30 variables + 110 groups with a single variable.
 
-```{r}
-p <- 200  # the number of features
-K <- 113  # number of groups 
-## 2 relevants groups with 30 variables
-## 1 irrelevant group with 30 variables
-## 110 irrelevant groups with a single variable
-grp.size <- c(30, 30, 30, rep(1,110))
+```{r group structure}
+grp_size <- c(30, 30, 30, rep(1,110))
+K <- length(grp_size) # number of groups 
+p <- sum(grp_size)    # the number of variables
 ```
 
-We draw 100 observation of a Gaussian vector the covariance of which has a block structure faithfull to the original grouping of the variables.
-
-```{r}
-## covariance defined blockwise
-n <- 100
-rhos <- runif(K,.5,.95) # correlation within groups
-Sigma <- bdiag(lapply(1:K, function(k) return(matrix(rhos[k],grp.size[k],grp.size[k]))))
+We then define a covariance matrix $\Sigma_X$ the structure of which is faithful to the original grouping of the variables
+```{r covariance predictors}
+Sigma <- 
+  runif(K,.5,.95) %>% # a vector defining within-group correlation
+  map2(grp_size, ~ matrix(.x, .y, .y)) %>% bdiag()
 diag(Sigma) <- 1
-grp <- rep(1:length(grp.size), grp.size)
-X <- Sigma %>%
-  as.matrix() %>%
-  rmvnorm(n, sigma=.) %>%
-  scale()
 ```
 
-The matrix of empirical correlation is rather convincing:
+We then draw $n = 100$ observations of a centered multivariate Gaussian vector with covariance $\Sigma_X$:
+
+```{r gaussian vectoor}
+n <- 100 # sample size
+X <- rmvnorm(n, sigma = as.matrix(Sigma))
+```
+
+The matrix of empirical correlation of $X$ clearly show that the group structure is well embedded in the data:
 
 ```{r, include=TRUE, fig.width=7}
-X %>% 
-  cor() %>%
-  Matrix %>%
-  image(main="cor(X)")
+corrplot(cor(X), method = "color", tl.pos = "n")
 ```
 
-### Phenotype/Response vector
+### Phenotype/Response vector 
 
-The phenotype will be a linear combinason of the *compressed* version of the predictors. Here, we use the mean to compressed the variable which are in the same group:
+The phenotype is a linear combinaison of the *compressed* version of the predictors. Here, we use the mean to compressed a group of variables:
 
-```{r}
-X.comp <- t(rowsum(t(X), grp)/tabulate(grp))
+```{r compressed predictors}
+grp_ind <- rep(1:K, grp_size) # vector of group indices
+X_comp  <- t(rowsum(t(X), grp_ind)/tabulate(grp_ind))
 ```
 
-The vector of regression parameters is sparse, chosen such that the first two group are predictive:
+The vector of regression parameters $\theta$ is sparse, chosen such that the first two group are predictive:
 
-```{r}
-dim.theta <- ncol(X.comp)
-theta <- rep(0, dim.theta)
+```{r regression parameters}
+theta <- rep(0, ncol(X_comp))
 theta[c(1,2)] <- runif(2, min=5, max=10) ## simple effects on the first two groups
 ```
 
-Finally, the response vector is drawn from a linear model. The level of noise is such that the $R^2$ is approximately $0.75$.
+Finally, the response vector $y$ is drawn from a linear model. The level of noise is chosen such that the $R^2\approx 0.75$ on average.
 
-```{r}
+```{r reponse}
 sigma <- 5
 epsilon <- rnorm(n) * sigma
-epsilon.test <- rnorm(n) * sigma
-y <- X.comp %*% theta + epsilon
-r2 <- 1-sum(epsilon^2) / sum((y-mean(y))^2)
-r2
+y <- X_comp %*% theta + epsilon
 ```
 
 ## Adjusting a single hierarchy
 
-Now, we try to recover the correct level of compression only from the original input matrix and the response vector. We test all the level of a hierarchy obtained by a WARD hierarchical clustering. The grouping is rather obvious in this case: 
+Now, we try to recover the correct level of compression only from the original input matrix of predictors and the response vector. We test all the level of a hierarchy obtained by hierarchical clustering with Ward criteria. The grouping is rather obvious in this case and easily recovered by hierarchical clustering:
 
-### Retreiving a hierarchy 
+### Retrieving a hierarchy 
 
-```{r, fig.width=7}
-hierarchy <- X %>% 
-  scale() %>%
-  t() %>%
-  dist() %>%
+```{r hierarchy, fig.width=7}
+hierarchy <- 
+  X %>% scale() %>% t() %>% 
+  dist(method = "euclidean") %>% 
   hclust(method="ward.D2")
-plot(hierarchy)
+plot(hierarchy, main = "Hierarchical clustering on the input matrix of predictors")
 ```
 
 ### Variable selection along the hierarchy
 
-We try the 3 available options in our package for simultaneously finding and selecting the groups of variables related to the phenotype:
+SIComORe also includes three alternative methods for prediction of phenotype with grouped correlated structure, on top of the one defined in @sicomore. MLGL (see @grimonprez_PhD, @mlgl) and the variant $\rho$-SIComORe in the spirit of @park. We try the 3 available options for simultaneously finding and selecting the groups of variables related to the phenotype:
 
-```{r}
-out.rho  <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="rho-sicomore", mc.cores=NULL)
-out.mlgl  <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="mlgl", mc.cores=NULL)
-out.sicomore <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="sicomore", mc.cores=NULL)
+```{r sim res}
+out_rho      <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="rho-sicomore", mc.cores=NULL)
+out_mlgl     <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="mlgl"        , mc.cores=NULL)
+out_sicomore <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="sicomore"    , mc.cores=NULL)
+all_res <- rbind(
+  cbind(out_rho$cv.error     , method="rho-sicomore"),
+  cbind(out_sicomore$cv.error, method="sicomore"),
+  cbind(out_mlgl$cv.error    , method="mlgl")
+  )
 ```
 
 The three models show comparable estimated prediction error on the best level of the hierarchy:
 
-```{r, fig.width=7, warning=FALSE}
-all.cv <- rbind(cbind(out.rho$cv.error , method="rho-sicomore"),
-                cbind(out.sicomore$cv.error, method="sicomore"),
-                cbind(out.mlgl$cv.error , method="mlgl"))
-all.cv %>% 
-  ggplot(aes(x=lambda, y=mean, colour=method, group=method)) + 
-  geom_smooth(aes(ymin=mean-sd, ymax=mean+sd), stat="identity") + 
-   labs(y = "Mean cross-validation error", x = "Lambda") +
-  coord_trans(x="log")
+```{r plot res, fig.width=7, warning=FALSE}
+ggplot(all_res) + aes(x = lambda, y = mean, colour = method, group = method) + 
+  geom_smooth(aes(ymin = mean - sd, ymax = mean + sd), stat="identity") + 
+  labs(y = "Mean cross-validation error", x = "Lambda") + coord_trans(x = "log")
 ```
 
-In terms of variables selections, 
+The group selected can be reached with the `getGrp()` methods. For instance, 
 
-```{r}
-out.mlgl$getGrp()
-out.rho$getGrp()
-out.sicomore$getGrp()
+```{r group selection}
+out_rho$getGrp()
 ```
 
 ## Comparison of computation time between the 3 options:
 
-```{r, message=FALSE, warning=FALSE, include=TRUE}
+```{r timings, message=FALSE, warning=FALSE}
 RHO      <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="rho-sicomore", mc.cores=NULL))
-SICOMORE <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="sicomore", mc.cores=NULL))
-MLGL     <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="mlgl", mc.cores=NULL))
-bench    <- microbenchmark(eval(RHO), eval(SICOMORE) , eval(MLGL), times = 5)
+SICOMORE <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="sicomore"    , mc.cores=NULL))
+MLGL     <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="mlgl"        , mc.cores=NULL))
+bench    <- microbenchmark(eval(RHO), eval(SICOMORE) , eval(MLGL), times = 4)
 ```
 
 ```{r,fig.width=7}
 autoplot(bench)
 ```
+
+## References
