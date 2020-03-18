@@ -14,7 +14,7 @@
 #' It is also possible to specify no hierarchy with "noclust".
 #' @param selection a string for the method used for variable selection for each data set.
 #' Specify "sicomore" to use the method specifically developed for the package, "hcar" to use the method developped by \insertCite{park;textual}{SIComORe} or
-#' "mlgl" for the method of \insertCite{grimonprez;textual}{SIComORe}.
+#' "mlgl" for the method of \insertCite{grimonprez_PhD;textual}{SIComORe}.
 #' @param cuts a list of numeric vector defining the cut levels to be considered for each hierarchy. By default a sequence of 100 levels is used.
 #' @param choice a string (either "lambda.min" or "lambda.1se"). Indicates how the tuning parameter is chosen in the penalized regression approach.
 #' @param depth.cut a vector of integers specifying the depth of the search space for the variable selection part of the algorithm.

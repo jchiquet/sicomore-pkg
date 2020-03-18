@@ -20,7 +20,7 @@ Encoding: UTF-8
 License: GPL (>= 2)
 LazyData: TRUE
 Depends: R (>= 3.4)
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 RdMacros: Rdpack
 biocViews:
 Imports: 
@@ -40,6 +40,7 @@ Suggests:
   rmarkdown,
   tidyverse,
   reshape2,
+  corrplot,
   cowplot,
   mvtnorm,
   microbenchmark,

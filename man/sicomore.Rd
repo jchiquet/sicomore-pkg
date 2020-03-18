@@ -31,7 +31,7 @@ sicomore(
 
 \item{selection}{a string for the method used for variable selection for each data set.
 Specify "sicomore" to use the method specifically developed for the package, "hcar" to use the method developped by \insertCite{park;textual}{SIComORe} or
-"mlgl" for the method of \insertCite{grimonprez;textual}{SIComORe}.}
+"mlgl" for the method of \insertCite{grimonprez_PhD;textual}{SIComORe}.}
 
 \item{cuts}{a list of numeric vector defining the cut levels to be considered for each hierarchy. By default a sequence of 100 levels is used.}
 
