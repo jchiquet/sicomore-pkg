@@ -49,6 +49,7 @@ sicomore <- function(y,
                      choice=c("lambda.min", "lambda.min"),
                      method.clus = c("ward.D2","ward.D2"),
                      depth.cut = c(3,3),
+                     cor.bandwidth = 100,
                      mc.cores = NULL,
                      taxonomy = NULL,
                      verbose = TRUE,
@@ -70,10 +71,8 @@ sicomore <- function(y,
                                   stab, stab.param = lapply(stab.param, function(x) x[[i]]))
     }
     if (method.clus[i] == "snpClust") {
-      if (ncol(X.list[[i]]) > 600) h <- 600
-      else h <- ncol(X.list[[i]]) - 1
       #hierarchies[[i]] <- adjclust::snpClust(X.list[[i]], h=h)
-      hierarchies[[i]] <- cWard(X.list[[i]], h=h, heaps = TRUE)
+      hierarchies[[i]] <- cWard(X.list[[i]], h=cor.bandwidth, heaps = TRUE)
 
       models[[i]] <- getHierLevel(X.list[[i]], y, hierarchies[[i]], cut.levels = cuts[[i]], compression=compressions[i],
                                   selection=selection, choice=choice[i], depth.cut = depth.cut[i], mc.cores=mc.cores,
