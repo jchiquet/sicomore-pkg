@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 ```
 
 
-This vignette illustrates how SIComORe can be used for the analysis of a single data set with correlated predictors related to a phenotype. 
+This vignette illustrates how SIComORe can be used to analyze a single data set with correlated predictors related to a phenotype. 
 
 ## Requirements
 
@@ -46,7 +46,7 @@ library(Matrix)
 SIComORe assumes an underlying linear model to link a phenotype (or response) of interest to a set several matrices of correlated predictors (see @sicomore). In the case at hand, we only consider a single matrix thus the generative model is
 
 \begin{equation*}
-  \mathbf{y} = \sum_{g \in \mathcal{G}} \phi( \mathbf{X}_{g}) \boldsymbol\theta_g + \boldsymbol\varepsilon, \qquad \boldsymbol\varepsilon \sim \mathcal{N}(\mathbf{0}_n, \mathbf{I}_n \sigma^2),
+  \mathbf{y} = \sum_{g \in \mathcal{G}} \phi( \mathbf{X}_{g}) \beta_g + \boldsymbol\varepsilon, \qquad \boldsymbol\varepsilon \sim \mathcal{N}(\mathbf{0}_n, \mathbf{I}_n \sigma^2),
 \end{equation*}
 where
 
@@ -55,9 +55,9 @@ where
   - $\mathbf{X}$ is a matrix of predictors with $n$ rows and $p$ columns,
   - $\mathcal{G}$ is a latent group structure with $K$ groups,
   - $\phi$ is a function (typically the mean "in row") for compressing $\mathbf{X}_g$ into a vector,
-  - $\boldsymbol\theta$ is a vector withg $K$ coefficients (one per group).
+  - $\boldsymbol\beta$ is a vector with $K$ coefficients (one per group).
   
-SIComORe includes the function `getHierLevel` to estimate both the underlying group structure $\mathcal{G}$ and the vector of regression $\boldsymbol\theta$ from the data $(\mathbf{y},\mathbf{X})$. We detail its use on a simulated example bellow.
+SIComORe includes the function `getHierLevel` to estimate both the underlying group structure $\mathcal{G}$ and the vector of regression $\boldsymbol\beta$ from the data $(\mathbf{y},\mathbf{X})$. We detail its use on a simulated example bellow.
 
 ## Data generation
 
@@ -86,7 +86,7 @@ n <- 100 # sample size
 X <- rmvnorm(n, sigma = as.matrix(Sigma))
 ```
 
-The matrix of empirical correlation of $X$ clearly show that the group structure is well embedded in the data:
+The matrix of empirical correlations of $X$ clearly show that the group structure is well embedded in the data:
 
 ```{r, include=TRUE, fig.width=7}
 corrplot(cor(X), method = "color", tl.pos = "n")
@@ -101,7 +101,7 @@ grp_ind <- rep(1:K, grp_size) # vector of group indices
 X_comp  <- t(rowsum(t(X), grp_ind)/tabulate(grp_ind))
 ```
 
-The vector of regression parameters $\theta$ is sparse, chosen such that the first two group are predictive:
+The vector of regression parameters $\beta$ is sparse, chosen such that the first two group are predictive:
 
 ```{r regression parameters}
 theta <- rep(0, ncol(X_comp))
@@ -132,7 +132,7 @@ plot(hierarchy, main = "Hierarchical clustering on the input matrix of predictor
 
 ### Variable selection along the hierarchy
 
-SIComORe also includes three alternative methods for prediction of phenotype with grouped correlated structure, on top of the one defined in @sicomore. MLGL (see @grimonprez_PhD, @mlgl) and the variant $\rho$-SIComORe in the spirit of @park. We try the 3 available options for simultaneously finding and selecting the groups of variables related to the phenotype:
+SIComORe also includes three alternative methods of selection for prediction of phenotype with grouped correlated structure, on top of the one defined in @sicomore. MLGL (see @grimonprez_PhD, @mlgl) and the variant $\rho$-SIComORe in the spirit of @park. We try the 3 available options for simultaneously finding and selecting the groups of variables related to the phenotype:
 
 ```{r sim res}
 out_rho      <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="rho-sicomore", mc.cores=NULL)
@@ -159,7 +159,7 @@ The group selected can be reached with the `getGrp()` methods. For instance,
 out_rho$getGrp()
 ```
 
-## Comparison of computation time between the 3 options:
+## Comparison of the computation times between the 3 options
 
 ```{r timings, message=FALSE, warning=FALSE}
 RHO      <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="rho-sicomore", mc.cores=NULL))

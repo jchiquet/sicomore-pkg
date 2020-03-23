@@ -1,11 +1,13 @@
 ---
-title: "Illustration of sicomore function to detect interactions between 2 datasets"
+title: "Analysis of two related data set with SIComORe"
+subtitle: "Detect relevant interactions between structured data"
 author: "SIComORe team"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
     toc: true
     toc_depth: 3
+bibliography: references/biblio.bib
 link-citations: yes
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
@@ -22,205 +24,205 @@ knitr::opts_chunk$set(
   warning = FALSE)
 ```
 
-## Preliminaries
 
-This vignette illustrates SICOMORE for analysis two interacting data sets. 
+This vignette illustrates how SIComORe can be used to analyze two interacting data sets whose respective sets of predictors are related jointly to a response variable. This may occur for instance when metagenomic data and genetic data are jointly used to predict a phenotype of interest: a group of OTU in the metagenomic data and a group of SNP in the genetic data may predict well jointly a response.
 
-```{r message=FALSE, warning=FALSE, include=FALSE}
+## Requirements
+
+On top of `SIComORe`, this will require a couple of standard packages tailored for data manipulation, representation or benchmarking:
+
+```{r requirements,  message=FALSE, warning=FALSE}
 set.seed(1234)
+library(SIComORe)
+library(tidyverse)
+library(corrplot)
 library(microbenchmark)
+library(mvtnorm)
 library(Matrix)
 library(reshape2)
 library(cowplot)
-library(tidyverse)
-library(mvtnorm)
-library(SIComORe)
 ```
+
+
+## Statistical Model
+
+SIComORe assumes an underlying linear model to link a phenotype (or response) of interest to a set several matrices of correlated predictors (see @sicomore). In the case at hand, we consider two matrices (says, $\mathbf{X}^{(1)}$ for the genetic data and $\mathbf{X}^{(2)}$ for the metagenomic data). The generative model is thus
+
+\begin{equation*}
+  \mathbf{y} = \sum_{g \in \mathcal{G}^{(1)}} \phi( \mathbf{X}^{(1)}_{g}) \beta^{(1)}_g + \sum_{h \in \mathcal{G}^{(2)}} \phi( \mathbf{X}^{(2)}_{h}) \beta^{(2)}_h + \sum_{g \in \mathcal{G}^{(1)}} \sum_{h \in \mathcal{G}^{(2)}} \phi( \mathbf{X}^{(1)}_{G}) \phi( \mathbf{X}^{(2)}_{h}) \beta_{g h} + \boldsymbol\varepsilon, \qquad \boldsymbol\varepsilon \sim \mathcal{N}(\mathbf{0}_n, \mathbf{I}_n \sigma^2),
+\end{equation*}
+where
+
+  - $\mathbf{y}$ is a vector of phenotype $n$ observation,
+  - $\boldsymbol\varepsilon$ is a size-$n$ Gaussian vector of noise,
+  - $\mathbf{X}^{(1)}, \mathbf{X}^{(2)}$ are genetic and metagenomic matrices of predictors with $n$ rows and $p^{(1)}, p^{(2)}$ columns,
+  - $\mathcal{G}^{(1)}, \mathcal{G}^{(2)}$ are latent group structures with $K^{(1)}, K^{(2)}$ groups,
+  - $\phi$ is a function (typically the mean "in row") for compressing $\mathbf{X}^{(1)}_g, \mathbf{X}^{(2)}_g$ into a vector,
+  - $\boldsymbol\beta^{(1)}, \boldsymbol\beta^{(2)}$ are vectors of main effects with respectively $K^{(1)},K^{(2)}$ coefficients,
+  - $\boldsymbol\beta$ is a vector of interaction effects with respectively $K^{(1)} \times K^{(2)}$ coefficients.
 
 ## Data sets generations
 
-### Input Matrices generations
+### Group-structured Matrices of predictors
 
-Data generation goes pretty much just like in the example on an single data set (see the corresponding vignette), but two data sets are required. The sample size is common to both data sets:
+Data generation goes pretty much just like in the example on an single data set (see [the corresponding vignette](singleData.html) for details), but here two data sets are required. 
 
+These two data sets share a common sample size:
 ```{r sample size}
 n <- 100
 ```
 
-Now, the first data set:
-```{r}
-## FIRST DATA
+The first data set is composed by 50 variables spread into 5 groups approximately balanced:
+```{r first data set}
 p1 <- 50 # number of variables 
 K1 <- 5  # number of groups
-rhos <- K1 %>% 
-  runif(.5,.95) # correlation within groups
-grp1.size <- rmultinom(1,p1,rep(p1/K1,K1)) ## group sizes
-Sigma1 <- lapply(1:K1, function(k) return(matrix(rhos[k],grp1.size[k],grp1.size[k]))) %>% 
-  bdiag()
+grp1_size <- rmultinom(1,p1,rep(p1/K1,K1)) ## group sizes
+Sigma1 <- 
+  runif(K1,.5,.95) %>% # a vector defining within-group correlation
+  map2(grp1_size, ~ matrix(.x, .y, .y)) %>% bdiag()
 diag(Sigma1) <- 1
-grp1 <- rep(seq(grp1.size),grp1.size)
-X1 <- Sigma1 %>% 
-  as.matrix() %>% 
-  rmvnorm(n, sigma=.) %>% 
-  scale()
+X1 <- rmvnorm(n, sigma = as.matrix(Sigma1))
 ```
 
-And the second data set:
-```{r}
+The second data set is composed by 40 variables spread into 10 groups approximately balanced:
+```{r second data set}
 p2 <- 40
 K2 <- 10
-rhos <- K2 %>% 
-  runif(.5,.95) # correlation within groups
-grp2.size <- rmultinom(1,p2,rep(p2/K2,K2)) ## group sizes
-Sigma2 <- lapply(1:K2, function(k) return(matrix(rhos[k],grp2.size[k],grp2.size[k]))) %>%
-  bdiag()
+grp2_size <- rmultinom(1,p2,rep(p2/K2,K2)) ## group sizes
+Sigma2 <- 
+  runif(K2,.5,.95) %>% # a vector defining within-group correlation
+  map2(grp2_size, ~ matrix(.x, .y, .y)) %>% bdiag()
 diag(Sigma2) <- 1
-grp2 <- rep(seq(grp2.size), grp2.size)
-X2 <- Sigma2 %>% 
-  as.matrix() %>% 
-  rmvnorm(n, sigma=.) %>% 
-  scale()
+X2 <- rmvnorm(n, sigma = as.matrix(Sigma2))
 ```
 
-We show the matrix of empirical correlation exhibiting the block structure of both matrices:
-```{r, fig.width=7}
-par(mfrow = (c(2,1)))
-image(Matrix(cor(X1)), main = "cor(X1)")
-image(Matrix(cor(X2)), main = "cor(X2)")
+The matrices of empirical correlations of $\mathbf{X}^{(1)}$ and $\mathbf{X}^{(2)}$ exhibit the block structures of each data set:
+
+```{r covariance matrices, fig.width=8, fig.height=4}
+par(mfrow = c(1,2))
+corrplot(cor(X1), method = "color", tl.pos = "n")
+corrplot(cor(X2), method = "color", tl.pos = "n")
 ```
 
-### Phenotype/Response vector
+### Phenotype/Response vector 
 
-Generation of the response vector and vector of coefficient is a little more tricky this time
+The phenotype is a linear combinaison of the *compressed* version of the predictors. Here, we use the mean to compressed a group of variables:
 
-First, we need first to compress each input matrices, 
-```{r}
-simple.effects.1 <- t(rowsum(t(X1), grp1)/tabulate(grp1))
-simple.effects.2 <- t(rowsum(t(X2), grp2)/tabulate(grp2))
+```{r predictors compression}
+grp1_ind <- rep(1:K1, grp1_size) # vector of group indices
+grp2_ind <- rep(1:K2, grp2_size) # vector of group indices
+main_effects_1 <- t(rowsum(t(X1), grp1_ind)/tabulate(grp1_ind))
+main_effects_2 <- t(rowsum(t(X2), grp2_ind)/tabulate(grp2_ind))
 ```
 
-Then, we compute the corresponding matrix of data interaction 
-```{r}
-interactions <- lapply(1:ncol(simple.effects.2), function(i) sweep(simple.effects.1, 1, simple.effects.2[, i], "*")) %>%
-  do.call(cbind,.)
+This time we also need the matrix of data interactions, with size $n \times (K^{(1)} \times K^{(2)})$.
+```{r interactions data}
+interactions <- 
+  map(1:K2, ~ sweep(main_effects_1, 1, main_effects_2[, .x], "*")) %>%
+  do.call(cbind, .)
 ```
 
-The parameters in the linear model originating the response variable are chosen such that there is $s=2$ non-null interactions. The simple effect associated with these interactions are non-null too.
+The parameters $\boldsymbol\beta^{(1)}, \boldsymbol\beta^{(2)}$ and $\boldsymbol\beta$ in the linear model originating the response variable are chosen such that there is $s=2$ non-null interactions in the matrix $\beta$: 
 
-```{r}
-s <- 2 ## number of non-null interactions
-# vector of true parameter at the correct level of the hierarchies
-dim1 <- ncol(simple.effects.1)
-dim2 <- ncol(simple.effects.2)
-dim.inter <- dim1 * dim2
-ind.inter <- sample(1:dim.inter, s)
-theta.inter <- rep(0, dim.inter)
-theta.inter[ind.inter] <- runif(s, min=2, max=4) ## interactions : sparse
-theta.block.inter <- Matrix(theta.inter, dim1, dim2)
-ind.simple.effects <- which(theta.block.inter!=0, arr.ind=TRUE)
-theta1 <- rep(0, dim1)
-theta1[ind.simple.effects[,1]] <- runif(nrow(ind.simple.effects), min=1,max=2)
-theta2 <- rep(0, dim2)
-theta2[ind.simple.effects[,2]] <- runif(nrow(ind.simple.effects), min=1,max=2)
+```{r theta}
+s <- 2 # number of non-null interactions
+theta <- Matrix(0, K1, K2)
+theta[sample(1:(K1 * K2), s)] <- runif(s, 2, 4)
 ```
 
-Finally we can draw the response vector
-```{r}
+The main effects associated with these interactions are drawn different from zero:
+```{r main effect}
+beta1 <- rep(0, K1)
+beta2 <- rep(0, K2)
+ind <- which(theta !=0 , arr.ind = TRUE)
+beta1[ind[, 1]] <- runif(s, 1, 2)
+beta2[ind[, 2]] <- runif(s, 1, 2)
+```
+
+Finally we can draw the response vector, with a noise level aiming for coefficient of determination of 0.75 on average.
+```{r reponse}
 sigma <- 3
 epsilon <- rnorm(n) * sigma
 mu <- 3
-y <- mu + interactions %*% theta.inter + simple.effects.1 %*% theta1 + simple.effects.2 %*% theta2 + epsilon
-r2 <- 1-sum(epsilon^2) / sum((y-mean(y))^2)
-r2
+y <- mu + interactions %*% as(theta, 'sparseVector') + main_effects_1 %*% beta1 + main_effects_2 %*% beta2 + epsilon
+y <- as.numeric(y)
 ```
 
 ## Adjusting multiple hierarchies
 
-Let us run the main `sicomore` function using Ward's algorithm for the hierarchical clustering:
+We try to recover the correct levels of compression only from the two original input matrices of predictors and the response vector. The main function `sicomore` uses by default a Ward criteria for both hierarchical clustering. At each pairs of levels in the hierarchies, a LASSO criterion is used to perform variables selection. Cross-validation is used to tune the sparisty level. All these defaults can be controlled byy the user:
 
-```{r message=FALSE, warning=FALSE, include=FALSE}
-res <- sicomore(y, list(X1, X2), selection = "sicomore", choice=c("lambda.min", "lambda.min"), method.clus = c("ward.D2","ward.D2"))
+```{r sicomore}
+res <- sicomore(
+            y            = y,            # response vector
+            X.list       = list(X1, X2), # list of matrices of predictors
+            choice      = c("lambda.min", "lambda.min"),
+            method.clus = c("ward.D2","ward.D2")
+        )
 ```
 
 We can plot the most striking interactions with the method `plot()` and compare with the "true" model: 
 
 ```{r message=FALSE, warning=FALSE, fig.width=7}
-theta.full <- theta.block.inter[rep(1:nrow(theta.block.inter), table(grp1)), 
-                                rep(1:ncol(theta.block.inter), table(grp2))] %>%
-  as.matrix()
-theta.true <- reshape2::melt(theta.full) %>% 
+theta_full <- theta[rep(1:K1, table(grp1_ind)), rep(1:K2, table(grp2_ind))] %>% as.matrix()
+plot_true <- 
+  reshape2::melt(theta_full) %>% 
   ggplot(aes(Var1, Var2, fill=value)) +
-  geom_tile(show.legend=FALSE, colour = "grey80") +
+  geom_tile(show.legend = FALSE, colour = "grey80") +
   scale_fill_gradient2(high = "grey40") +
-  theme_minimal() +
-  ggtitle("Matrix of true interactions") +
-  labs(x = 'Variables in X_1', y = 'Variables in X') + coord_fixed()
-theta.estimated <- res$plot(main="Estimated matrix of interactions", threshold=.05)
-cowplot::plot_grid(theta.estimated,theta.true, ncol=2)
+  theme_minimal() + ggtitle("Matrix of true interactions") +
+  labs(x = 'Variables in X^1', y = 'Variables in X^2') + coord_fixed()
+plot_hat <- res$plot(main = "Estimated matrix of interactions", threshold=.05)
+cowplot::plot_grid(plot_hat,plot_true, ncol = 2)
 ```
 
 ## Comparison of available options for variable selection
-To compare the 3 possible options "mlgl","hcar and "sicomore" in `selection`, we consider the performance in term of variable selection. So let us first define an simple function to compute basic statistics:
 
-```{r}
-getSelPerf <- function(theta, theta.star) {
-  ones.true <- which(theta.star != 0)
-  zero.true <- which(theta.star == 0)
-  ones.hat <- which(theta != 0)
-  zero.hat <- which(theta == 0)
-  tp <- sum(ones.hat %in% ones.true)
-  tn <- sum(zero.hat %in% zero.true)
-  fp <- sum(ones.hat %in% zero.true)
-  fn <- sum(zero.hat %in% ones.true)
-  if ((tp+fn)==0) recall    <- 0 else recall    <- tp/(tp+fn) 
-  if ((fp+tn)==0) fallout   <- 0 else fallout   <- fp/(fp+tn) 
-  if ((tp+fp)==0) precision <- 0 else precision <- tp/(tp+fp) 
-  return(c(recall=recall, fallout=fallout, precision=precision))
-}
-```
+SIComORe includes three alternative methods of selection for prediction of phenotype with grouped correlated structure, on top of the one defined in @sicomore. MLGL (see @grimonprez_PhD, @mlgl) and the variant $\rho$-SIComORe in the spirit of @park. We try the 3 available options for simultaneously finding and selecting the groups of variables related to the phenotype.
 
-And let us compare the 3 options in `selection`:
-
-```{r message=FALSE, warning=FALSE}
-out.sicomore <- sicomore(y, list(X1, X2), selection="sicomore", verbose = FALSE)
-out.mlgl <- sicomore(y, list(X1, X2), selection="mlgl", verbose = FALSE)
-out.rho <- sicomore(y, list(X1, X2), selection="rho-sicomore", verbose = FALSE)
+```{r message=FALSE, warning=FALSE, results='hide'}
+out_rho      <- sicomore(y, list(X1, X2), selection="rho-sicomore")
+out_mlgl     <- sicomore(y, list(X1, X2), selection="mlgl"        )
+out_sicomore <- sicomore(y, list(X1, X2), selection="sicomore"    )
 ```  
 
-We compute the matrix of interactions effects with the method `getSignificance(effect = "theta")` for each option:
-```{r message=FALSE, warning=FALSE}
-theta.mlgl <- out.mlgl$getSignificance(effect = "theta")
-theta.rho <- out.rho$getSignificance(effect = "theta")
-theta.sicomore <- out.sicomore$getSignificance(effect = "theta")
+In this case, the three method tends to produce a similar estimate of the interaction coefficients: 
+
+```{r plot comparison, fig.width=7}
+plot_mlgl     <- out_mlgl$plot(main = "Estimated interactions (MLGL)", threshold=.05)
+plot_sicomore <- out_sicomore$plot(main = "Estimated interactions (SICoMORE)", threshold=.05)
+plot_rho      <- out_rho$plot(main = "Estimated interactions (rho-SICoMORE)", threshold=.05)
+cowplot::plot_grid( plot_mlgl, plot_rho, 
+                    plot_sicomore, plot_true, ncol = 2, nrow = 2)
 ```
 
-Finally we evaluate the ability to recover the true interaction term for several significance thresholds:
-```{r message=FALSE, warning=FALSE, fig.width=7}
-seq.thres <- seq(0,1,len=100)
-res.sicomore <- sapply(seq.thres, function(threshold) getSelPerf(theta.sicomore>=threshold, theta.full)) %>%
-  t() %>%
-  data.frame()
-res.mlgl <- sapply(seq.thres, function(threshold) getSelPerf(theta.mlgl>=threshold, theta.full)) %>%
-  t() %>%
-  data.frame()
-res.rho <- sapply(seq.thres, function(threshold) getSelPerf(theta.rho>=threshold, theta.full)) %>%
-  t() %>%
-  data.frame()
-res.df <- data.frame(method = rep(c("sicomore","mlgl","rho-sicomore"), each = 100), rbind(res.sicomore, res.mlgl, res.rho))
-res.df %>% 
-  ggplot(aes(x = fallout, y = recall, color = method)) + 
-  geom_line()
-```
-
-## Comparison of computation time between the 3 options:
+The method `getSignificance(effect = "beta")` sends back the results of a statistical test for each set of coefficients (main effect or interaction) in the form of $1-p$-value. This can be used to determine at which extend a coefficient is selected (the closer from 1, the higher the probability for being non zero):
 
 ```{r message=FALSE, warning=FALSE}
-SICOMORE <- expression(sicomore(y, list(X1, X2), selection="sicomore", verbose=FALSE))
-MLGL     <- expression(sicomore(y, list(X1, X2), selection="mlgl", verbose=FALSE))
+pval_mlgl     <- 1 - out_mlgl$getSignificance(effect = "theta")
+pval_rho      <- 1 - out_rho$getSignificance(effect = "theta")
+pval_sicomore <- 1 - out_sicomore$getSignificance(effect = "theta")
+
+par(mfrow = c(1,3))
+hist(pval_mlgl    , main = "p-values MLGL")
+hist(pval_sicomore, main = "p-values SIComORe")
+hist(pval_rho     , main = "p-values rho-SIComORe")
+```
+
+## Comparison of the computation times between the 3 options
+
+As espected, the SICoMORe variants are much faster than the MLGL one.
+
+```{r timings, message=FALSE, warning=FALSE}
 RHO      <- expression(sicomore(y, list(X1, X2), selection="rho-sicomore", verbose=FALSE))
-bench <- microbenchmark(eval(SICOMORE) , eval(MLGL), eval(RHO), times = 5)
+SICOMORE <- expression(sicomore(y, list(X1, X2), selection="sicomore"    , verbose=FALSE))
+MLGL     <- expression(sicomore(y, list(X1, X2), selection="mlgl"        , verbose=FALSE))
+bench    <- microbenchmark(eval(RHO), eval(SICOMORE) , eval(MLGL), times = 4)
 ```
 
-```{r,fig.width=7}
+```{r timings plot, fig.width=7}
 autoplot(bench)
 ```
+
+## References
+
