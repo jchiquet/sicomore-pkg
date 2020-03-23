@@ -1,4 +1,4 @@
-#' Sicomore-model RC object
+#' sicomore-model RC object
 #'
 #' @docType class
 #' @import ggplot2
@@ -81,6 +81,3 @@ sicomore.fit <-
               )
   )
 
-# pval <- matrix(NA,ncol(res.hier[[1]]$X.comp),ncol(res.hier[[2]]$X.comp))
-# significance <- Matrix(0,ncol(X.list[[1]]),ncol(X.list[[2]]))
-#

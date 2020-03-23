@@ -30,8 +30,8 @@ sicomore(
 \item{compressions}{a vector of string for the compression methods for each data sets. Default used the mean to compressed predictors in the same group.}
 
 \item{selection}{a string for the method used for variable selection for each data set.
-Specify "sicomore" to use the method specifically developed for the package, "hcar" to use the method developped by \insertCite{park;textual}{SIComORe} or
-"mlgl" for the method of \insertCite{grimonprez_PhD;textual}{SIComORe}.}
+Specify "sicomore" to use the method specifically developed for the package, "hcar" to use the method developped by \insertCite{park;textual}{sicomore} or
+"mlgl" for the method of \insertCite{grimonprez_PhD;textual}{sicomore}.}
 
 \item{cuts}{a list of numeric vector defining the cut levels to be considered for each hierarchy. By default a sequence of 100 levels is used.}
 
@@ -39,7 +39,7 @@ Specify "sicomore" to use the method specifically developed for the package, "hc
 
 \item{method.clus}{a vector of string specifying the method used for the hierarchical clustering, one for each input matrix in X.list.
 By default, the hierarchy is obtain by a WARD clustering on the scaled input matrix.
-To use an SNP-specific spatially contrained hierarchical clustering \insertCite{dehman}{SIComORe} from package adjclust, specify "snpClust".
+To use an SNP-specific spatially contrained hierarchical clustering \insertCite{dehman}{sicomore} from package adjclust, specify "snpClust".
 It is also possible to specify no hierarchy with "noclust".}
 
 \item{depth.cut}{a vector of integers specifying the depth of the search space for the variable selection part of the algorithm.
@@ -79,11 +79,6 @@ From a set of input matrices and phenotype related to the same set of individual
 1. find and select groups of correlated variables in each input matrix which are good predictors for the common phenotype
 2. find the most predictive interaction effects between the set of data by testing for interaction between the selected groups of each input matrix
 }
-\section{Functions in sicomore}{
-
-TODO
-}
-
 \references{
 \insertAllCited{}
 }

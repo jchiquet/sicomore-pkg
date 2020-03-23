@@ -4,8 +4,8 @@
 \name{sicomore-model-class}
 \alias{sicomore-model-class}
 \alias{sicomore.model}
-\title{Sicomore-model RC object}
+\title{sicomore-model RC object}
 \description{
-Sicomore-model RC object
+sicomore-model RC object
 }
 

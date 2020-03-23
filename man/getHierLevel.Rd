@@ -26,8 +26,8 @@ getHierLevel(
 \item{hierarchy}{the results of a hierarchical clustering algorithm, typically \code{hclust}. Must be an "hclust" object}
 
 \item{selection}{a string for the method used for variable selection for each data set.
-Specify "sicomore" to use the method specifically developed for the package, "hcar" to use the method developped by \insertCite{park;textual}{SIComORe} or
-"mlgl" for the method of \insertCite{grimonprez_PhD;textual}{SIComORe}.}
+Specify "sicomore" to use the method specifically developed for the package, "hcar" to use the method developped by \insertCite{park;textual}{sicomore} or
+"mlgl" for the method of \insertCite{grimonprez_PhD;textual}{sicomore}.}
 
 \item{compression}{a string (either "mean" or "SNP.dist"). Indicates how the groups of variables are compressed before variable selection at each level of the hierarchy.}
 

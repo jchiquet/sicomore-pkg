@@ -65,7 +65,7 @@
   chainedL[8,p-1] <- -1
   heap <- .buildHeap(heap, D, lHeap)
 
-  res <- .Call("cWardHeaps", rcCumRight, rcCumLeft, as.integer(h), as.integer(p), chainedL, heap, D, as.integer(lHeap), merge, gains, traceW, as.integer(blMin), PACKAGE="SIComORe")
+  res <- .Call("cWardHeaps", rcCumRight, rcCumLeft, as.integer(h), as.integer(p), chainedL, heap, D, as.integer(lHeap), merge, gains, traceW, as.integer(blMin), PACKAGE="sicomore")
 
   height <- cumsum(gains)
   tree <- list(traceW=traceW,

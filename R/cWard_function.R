@@ -42,7 +42,7 @@
 ## checked !! (with PROTECT)
 .buildHeap <- function(heap, D, l){
   for (ii in floor(l/2) : 1){
-    heap <- .Call("percDown", heap, D, as.integer(l), as.integer(ii), PACKAGE="SIComORe")
+    heap <- .Call("percDown", heap, D, as.integer(l), as.integer(ii), PACKAGE="sicomore")
   }
   return(heap)
 }

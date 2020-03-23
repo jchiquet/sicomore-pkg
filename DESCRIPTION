@@ -1,4 +1,4 @@
-Package: SIComORe
+Package: sicomore
 Title: Selection of Interaction effects in COmpressed Multiple Omics REpresentation
 Version: 0.2.1-9000
 Authors@R: c(
