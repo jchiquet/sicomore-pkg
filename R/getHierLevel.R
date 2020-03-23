@@ -1,5 +1,6 @@
-#' @title getHierLevel
-#' @description A function to select groups of variables which are good for predicting a given phenotype.
+#' getHierLevel
+#'
+#' A function to select groups of variables which are good for predicting a given phenotype.
 #' The groups considered corresponds various cut levels in a user defined hierarchy.
 #' The selection is performed by various penalty-based regression methods.
 #'
@@ -19,7 +20,7 @@
 #' @param stab.param not yet documented
 #' @param mc.cores an integer for the number of cores to use in the parallelization of the cross-validation and some other functions.
 #'
-#' @return a RC object with class 'sicomore-model', with methods \code{nGrp()}, \code{nVar()}, \code{getGrp()}, \code{getVar()}, \code{getCV()}, \code{getX.comp()}, \code{getCoef()} and with the following fields:
+#' @return an RC object with class 'sicomore-model', with methods \code{nGrp()}, \code{nVar()}, \code{getGrp()}, \code{getVar()}, \code{getCV()}, \code{getX.comp()}, \code{getCoef()} and with the following fields:
 #' \itemize{
 #'  \item{groups:}{a list with the selected groups of predictors}
 #'  \item{coefficients:}{a vector with the estimated coefficients (one per selected group)}
@@ -68,8 +69,8 @@ getHierLevel <- function(X,
   ## GET THE BEST COMPRESSION LEVEL IN THE HIERARCHY
   .getHier <- switch(selection,
                      "rho-sicomore" = getHierLevel.rhosicomore,
-                     "sicomore" = getHierLevel.sicomore,
-                     "mlgl" = getHierLevel.MLGL)
+                     "sicomore"     = getHierLevel.sicomore,
+                     "mlgl"         = getHierLevel.MLGL)
 
   out <- .getHier(X, y, hierarchy, compression, cut.levels, choice, depth.cut, mc.cores, stab, stab.param)
 
@@ -97,7 +98,7 @@ getHierLevel <- function(X,
     res$cv.error = out$cv
   }
 
-  return(res)
+  res
 }
 
 ## __________________________________________________________________
@@ -147,7 +148,7 @@ getHierLevel.rhosicomore <- function(X, y, hc.object, compression, cut.levels, c
 
   }
 
-  return(res)
+  res
 }
 
 ## __________________________________________________________________
@@ -184,28 +185,9 @@ getHierLevel.sicomore <- function(X, y, hc.object, compression, cut.levels, choi
     coefficients <- coefficients[selected.groups]
     res <- list(cv = data.frame(mean = cv$cvm, sd = cv$cvsd, lambda  = cv$lambda),
                 groups = groups, coefficients = coefficients)
-
-    # all.cv <- lapply(hierarchy, function(group) {
-    #   return(glmnet::cv.glmnet(computeCompressedDataFrame(X, group, compression), y, parallel=!is.null(mc.cores)))
-    # })
-    # ## piles up the cv.error of each level of the hierarchy for all lambda
-    # cv.error <- do.call(rbind,
-    #                     lapply(all.cv, function(cv) {
-    #                       data.frame(mean = cv$cvm, sd = cv$cvsd, lambda  = cv$lambda, ngroup = cv$glmnet.fit$dim[1])
-    #                     }))
-    #
-    # ## Extract the best model
-    # ibest <- match(cv.error$ngroup[which.min(cv.error$mean)], cut.levels)
-    # selected.group <- predict(all.cv[[ibest]], s=choice, type="nonzero")[[1]]
-    # groups    <- lapply(selected.group, function(x) which(hierarchy[[ibest]] == x))
-    # coefficients <- predict(all.cv[[ibest]], s=choice, type="coefficients")[-1,] # without intercept
-    # coefficients <- coefficients[selected.group]
-    #
-    # res <- list(cv = data.frame(mean = all.cv[[ibest]]$cvm, sd = all.cv[[ibest]]$cvsd, lambda  = all.cv[[ibest]]$lambda),
-    #             groups = groups, coefficients = coefficients)
   }
 
-  return(res)
+  res
 }
 
 ## __________________________________________________________________
@@ -242,35 +224,7 @@ getHierLevel.MLGL <- function(X, y, hc.object, compression, cut.levels, choice, 
   groups       <- split(variables, fit.group)
   coefficients <- as.numeric(Matrix::sparseVector(fit.beta,unique(variables[o]),ncol(X)))
 
-  return(list(cv = data.frame(mean=cv.error$cvm, sd=cv.error$cvsd, lambda=cv.error$lambda),
-              groups = groups, coefficients = coefficients))
+  list(cv = data.frame(mean=cv.error$cvm, sd=cv.error$cvsd, lambda=cv.error$lambda),
+              groups = groups, coefficients = coefficients)
 }
 
-
-
-# getHierLevel.PVAL <- function(X, y, hc.object, compression, cut.levels, choice, threshold=1, depth.cut, mc.cores) {
-#
-#   ## recovering the hierarchies at each cuting level.
-#   hierarchy <- lapply(apply(cutree(hc.object, k = cut.levels), 2, list), unlist, recursive=FALSE)
-#
-#   ## recover the grid of penalties used for comparison
-#   all.pval <- lapply(hierarchy, function(group) {
-#     return(computePval(computeCompressedDataFrame(X, group, compression), y, threshold=threshold)) # return pvalue for each supervariable
-#                                                                                # and number of significative pvalue
-#                                                                                # after multiple pvalue correction
-#
-#   })
-#   browser()
-#   ## piles up the pvalue number  of each level of the hierarchy for all cut levels
-#   pval.count  <- do.call(rbind,
-#                       lapply(all.pval, function(pval) {
-#                         data.frame( count = pval$count , nbgroup = length(pval$pval.raw))
-#                       }))
-#
-#   ## Extract the best model
-#   ibest <- match(pval.count$nbgroup[which.max(pval.count$count)], cut.levels)
-#   selected.group <- which(all.pval[[ibest]]$pval.adjusted > threshold)    #
-#   groups    <- lapply(selected.group, function(x) which(hierarchy[[ibest]] == x))
-#
-#   return(list(pval.count = pval.count,  groups = groups, coefficients = all.pval[[ibest]]$pval.raw))
-# }

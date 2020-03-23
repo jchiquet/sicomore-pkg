@@ -1,5 +1,6 @@
-#' @title sicomore
-#' @description Selection of Interaction effects in COmpressed  Multiple Omics REpresentation
+#' sicomore
+#'
+#' Selection of Interaction effects in COmpressed  Multiple Omics REpresentation
 #'
 #' From a set of input matrices and phenotype related to the same set of individual, sicomore is a two-step method which
 #' 1. find and select groups of correlated variables in each input matrix which are good predictors for the common phenotype
@@ -27,7 +28,7 @@
 #' @param verbose not yet documented
 #' @param stab not yet documented
 #' @param stab.param not yet documented
-#' @return a RC object with class \code{sicomore} with methods \code{plot()}, \code{getSignificance()} and the following fields
+#' @return an RC object with class \code{sicomore} with methods \code{plot()}, \code{getSignificance()} and the following fields
 #' \itemize{
 #'  \item{pval:}{A matrix of p-values for each interactions effects between the compressed variables originating from 2 input matrices.}
 #'  \item{pval.beta1:}{A matrix of p-values for the corresponding main effects of the compressed variables originating from the first input matrix}
@@ -179,7 +180,7 @@ sicomore <- function(y,
     colnames(data.tmp) <- c("X1", "X2", "y")
     pval <- summary(lm(y ~ X1*X2, data=data.tmp))$coefficients[-1,4]
     if (!("X1:X2" %in% names(pval))) pval<- c(pval,1) ; names(pval) <- c("X1", "X2", "X1:X2")
-    return(pval)
+    pval
   })
 
   ## TODO : If no simple effects are reported as significant,
@@ -196,7 +197,7 @@ sicomore <- function(y,
   pval.beta2[do.call(rbind, tuplets)] <- pval[2,]
   pval.inter[do.call(rbind, tuplets)] <- pval[3,]
 
-  return(new("sicomore-fit", pval = pval.inter, pval.beta1 = pval.beta1, pval.beta2 = t(pval.beta2),
-             tuplets = tuplets, models=models, dim=sapply(X.list, ncol)))
+  new("sicomore-fit", pval = pval.inter, pval.beta1 = pval.beta1, pval.beta2 = t(pval.beta2),
+             tuplets = tuplets, models=models, dim=sapply(X.list, ncol))
 }
 

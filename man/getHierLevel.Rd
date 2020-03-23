@@ -46,7 +46,7 @@ A value between 3 and 6 is recommended, the smaller the faster.}
 \item{stab.param}{not yet documented}
 }
 \value{
-a RC object with class 'sicomore-model', with methods \code{nGrp()}, \code{nVar()}, \code{getGrp()}, \code{getVar()}, \code{getCV()}, \code{getX.comp()}, \code{getCoef()} and with the following fields:
+an RC object with class 'sicomore-model', with methods \code{nGrp()}, \code{nVar()}, \code{getGrp()}, \code{getVar()}, \code{getCV()}, \code{getX.comp()}, \code{getCoef()} and with the following fields:
 \itemize{
  \item{groups:}{a list with the selected groups of predictors}
  \item{coefficients:}{a vector with the estimated coefficients (one per selected group)}
