@@ -92,7 +92,7 @@
             <h3 class="subtitle">Finding a relevant group structure to predict a phenotype</h3>
                         <h4 class="author">SIComORe team</h4>
             
-            <h4 class="date">2020-03-19</h4>
+            <h4 class="date">2020-03-23</h4>
       
       
       <div class="hidden name"><code>singleData.Rmd</code></div>
@@ -101,7 +101,7 @@
 
     
     
-<p>This vignette illustrates how SIComORe can be used for the analysis of a single data set with correlated predictors related to a phenotype.</p>
+<p>This vignette illustrates how SIComORe can be used to analyze a single data set with correlated predictors related to a phenotype.</p>
 <div id="requirements" class="section level2">
 <h2 class="hasAnchor">
 <a href="#requirements" class="anchor"></a>Requirements</h2>
@@ -119,7 +119,7 @@
 <a href="#statistical-model" class="anchor"></a>Statistical Model</h2>
 <p>SIComORe assumes an underlying linear model to link a phenotype (or response) of interest to a set several matrices of correlated predictors (see <span class="citation">Ambroise et al. (<a href="#ref-sicomore">2018</a>)</span>). In the case at hand, we only consider a single matrix thus the generative model is</p>
 <p><span class="math display">\[\begin{equation*}
-  \mathbf{y} = \sum_{g \in \mathcal{G}} \phi( \mathbf{X}_{g}) \boldsymbol\theta_g + \boldsymbol\varepsilon, \qquad \boldsymbol\varepsilon \sim \mathcal{N}(\mathbf{0}_n, \mathbf{I}_n \sigma^2),
+  \mathbf{y} = \sum_{g \in \mathcal{G}} \phi( \mathbf{X}_{g}) \beta_g + \boldsymbol\varepsilon, \qquad \boldsymbol\varepsilon \sim \mathcal{N}(\mathbf{0}_n, \mathbf{I}_n \sigma^2),
 \end{equation*}\]</span> where</p>
 <ul>
 <li>
@@ -133,9 +133,9 @@
 <li>
 <span class="math inline">\(\phi\)</span> is a function (typically the mean “in row”) for compressing <span class="math inline">\(\mathbf{X}_g\)</span> into a vector,</li>
 <li>
-<span class="math inline">\(\boldsymbol\theta\)</span> is a vector withg <span class="math inline">\(K\)</span> coefficients (one per group).</li>
+<span class="math inline">\(\boldsymbol\beta\)</span> is a vector with <span class="math inline">\(K\)</span> coefficients (one per group).</li>
 </ul>
-<p>SIComORe includes the function <code>getHierLevel</code> to estimate both the underlying group structure <span class="math inline">\(\mathcal{G}\)</span> and the vector of regression <span class="math inline">\(\boldsymbol\theta\)</span> from the data <span class="math inline">\((\mathbf{y},\mathbf{X})\)</span>. We detail its use on a simulated example bellow.</p>
+<p>SIComORe includes the function <code>getHierLevel</code> to estimate both the underlying group structure <span class="math inline">\(\mathcal{G}\)</span> and the vector of regression <span class="math inline">\(\boldsymbol\beta\)</span> from the data <span class="math inline">\((\mathbf{y},\mathbf{X})\)</span>. We detail its use on a simulated example bellow.</p>
 </div>
 <div id="data-generation" class="section level2">
 <h2 class="hasAnchor">
@@ -155,7 +155,7 @@
 <p>We then draw <span class="math inline">\(n = 100\)</span> observations of a centered multivariate Gaussian vector with covariance <span class="math inline">\(\Sigma_X\)</span>:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">n &lt;-<span class="st"> </span><span class="dv">100</span> <span class="co"># sample size</span></a>
 <a class="sourceLine" id="cb4-2" data-line-number="2">X &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/mvtnorm/man/Mvnorm.html">rmvnorm</a></span>(n, <span class="dt">sigma =</span> <span class="kw"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span>(Sigma))</a></code></pre></div>
-<p>The matrix of empirical correlation of <span class="math inline">\(X\)</span> clearly show that the group structure is well embedded in the data:</p>
+<p>The matrix of empirical correlations of <span class="math inline">\(X\)</span> clearly show that the group structure is well embedded in the data:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/pkg/corrplot/man/corrplot.html">corrplot</a></span>(<span class="kw"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span>(X), <span class="dt">method =</span> <span class="st">"color"</span>, <span class="dt">tl.pos =</span> <span class="st">"n"</span>)</a></code></pre></div>
 <p><img src="singleData_files/figure-html/unnamed-chunk-1-1.png" width="672"></p>
 </div>
@@ -165,7 +165,7 @@
 <p>The phenotype is a linear combinaison of the <em>compressed</em> version of the predictors. Here, we use the mean to compressed a group of variables:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">grp_ind &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span><span class="op">:</span>K, grp_size) <span class="co"># vector of group indices</span></a>
 <a class="sourceLine" id="cb6-2" data-line-number="2">X_comp  &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/rowsum.html">rowsum</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/t.html">t</a></span>(X), grp_ind)<span class="op">/</span><span class="kw"><a href="https://rdrr.io/r/base/tabulate.html">tabulate</a></span>(grp_ind))</a></code></pre></div>
-<p>The vector of regression parameters <span class="math inline">\(\theta\)</span> is sparse, chosen such that the first two group are predictive:</p>
+<p>The vector of regression parameters <span class="math inline">\(\beta\)</span> is sparse, chosen such that the first two group are predictive:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">theta &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">0</span>, <span class="kw"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(X_comp))</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2">theta[<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>)] &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="dv">2</span>, <span class="dt">min=</span><span class="dv">5</span>, <span class="dt">max=</span><span class="dv">10</span>) ## simple effects on the first two groups</a></code></pre></div>
 <p>Finally, the response vector <span class="math inline">\(y\)</span> is drawn from a linear model. The level of noise is chosen such that the <span class="math inline">\(R^2\approx 0.75\)</span> on average.</p>
@@ -191,7 +191,7 @@
 <div id="variable-selection-along-the-hierarchy" class="section level3">
 <h3 class="hasAnchor">
 <a href="#variable-selection-along-the-hierarchy" class="anchor"></a>Variable selection along the hierarchy</h3>
-<p>SIComORe also includes three alternative methods for prediction of phenotype with grouped correlated structure, on top of the one defined in <span class="citation">Ambroise et al. (<a href="#ref-sicomore">2018</a>)</span>. MLGL (see <span class="citation">Grimonprez (<a href="#ref-grimonprez_PhD">2016</a>)</span>, <span class="citation">Grimonprez et al. (<a href="#ref-mlgl">2019</a>)</span>) and the variant <span class="math inline">\(\rho\)</span>-SIComORe in the spirit of <span class="citation">Park, Hastie, and Tibshirani (<a href="#ref-park">2007</a>)</span>. We try the 3 available options for simultaneously finding and selecting the groups of variables related to the phenotype:</p>
+<p>SIComORe also includes three alternative methods of selection for prediction of phenotype with grouped correlated structure, on top of the one defined in <span class="citation">Ambroise et al. (<a href="#ref-sicomore">2018</a>)</span>. MLGL (see <span class="citation">Grimonprez (<a href="#ref-grimonprez_PhD">2016</a>)</span>, <span class="citation">Grimonprez et al. (<a href="#ref-mlgl">2019</a>)</span>) and the variant <span class="math inline">\(\rho\)</span>-SIComORe in the spirit of <span class="citation">Park, Hastie, and Tibshirani (<a href="#ref-park">2007</a>)</span>. We try the 3 available options for simultaneously finding and selecting the groups of variables related to the phenotype:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">out_rho      &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(X, y, hierarchy, <span class="dt">choice=</span><span class="st">"lambda.1se"</span>, <span class="dt">selection=</span><span class="st">"rho-sicomore"</span>, <span class="dt">mc.cores=</span><span class="ot">NULL</span>)</a>
 <a class="sourceLine" id="cb10-2" data-line-number="2">out_mlgl     &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(X, y, hierarchy, <span class="dt">choice=</span><span class="st">"lambda.1se"</span>, <span class="dt">selection=</span><span class="st">"mlgl"</span>        , <span class="dt">mc.cores=</span><span class="ot">NULL</span>)</a>
 <a class="sourceLine" id="cb10-3" data-line-number="3">out_sicomore &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(X, y, hierarchy, <span class="dt">choice=</span><span class="st">"lambda.1se"</span>, <span class="dt">selection=</span><span class="st">"sicomore"</span>    , <span class="dt">mc.cores=</span><span class="ot">NULL</span>)</a>
@@ -225,9 +225,9 @@
 ## [109] 199 200</code></pre>
 </div>
 </div>
-<div id="comparison-of-computation-time-between-the-3-options" class="section level2">
+<div id="comparison-of-the-computation-times-between-the-3-options" class="section level2">
 <h2 class="hasAnchor">
-<a href="#comparison-of-computation-time-between-the-3-options" class="anchor"></a>Comparison of computation time between the 3 options:</h2>
+<a href="#comparison-of-the-computation-times-between-the-3-options" class="anchor"></a>Comparison of the computation times between the 3 options</h2>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">RHO      &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="kw"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(X, y, hierarchy, <span class="dt">choice=</span><span class="st">"lambda.1se"</span>, <span class="dt">selection=</span><span class="st">"rho-sicomore"</span>, <span class="dt">mc.cores=</span><span class="ot">NULL</span>))</a>
 <a class="sourceLine" id="cb14-2" data-line-number="2">SICOMORE &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="kw"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(X, y, hierarchy, <span class="dt">choice=</span><span class="st">"lambda.1se"</span>, <span class="dt">selection=</span><span class="st">"sicomore"</span>    , <span class="dt">mc.cores=</span><span class="ot">NULL</span>))</a>
 <a class="sourceLine" id="cb14-3" data-line-number="3">MLGL     &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="kw"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(X, y, hierarchy, <span class="dt">choice=</span><span class="st">"lambda.1se"</span>, <span class="dt">selection=</span><span class="st">"mlgl"</span>        , <span class="dt">mc.cores=</span><span class="ot">NULL</span>))</a>
@@ -265,7 +265,7 @@
       <li><a href="#statistical-model">Statistical Model</a></li>
       <li><a href="#data-generation">Data generation</a></li>
       <li><a href="#adjusting-a-single-hierarchy">Adjusting a single hierarchy</a></li>
-      <li><a href="#comparison-of-computation-time-between-the-3-options">Comparison of computation time between the 3 options:</a></li>
+      <li><a href="#comparison-of-the-computation-times-between-the-3-options">Comparison of the computation times between the 3 options</a></li>
       <li><a href="#references">References</a></li>
       </ul>
 </div>
