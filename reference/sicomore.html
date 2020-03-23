@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>sicomore — sicomore • SIComORe</title>
+<title>sicomore — sicomore • sicomore</title>
 
 
 <!-- jquery -->
@@ -37,10 +37,7 @@
 
 <meta property="og:title" content="sicomore — sicomore" />
 <meta property="og:description" content="Selection of Interaction effects in COmpressed  Multiple Omics REpresentation
-Selection of Interaction effects in COmpressed  Multiple Omics REpresentation
-From a set of input matrices and phenotype related to the same set of individual, sicomore is a two-step method which
-1. find and select groups of correlated variables in each input matrix which are good predictors for the common phenotype
-2. find the most predictive interaction effects between the set of data by testing for interaction between the selected groups of each input matrix" />
+Selection of Interaction effects in COmpressed  Multiple Omics REpresentation" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -72,7 +69,7 @@ From a set of input matrices and phenotype related to the same set of individual
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">SIComORe</a>
+        <a class="navbar-link" href="../index.html">sicomore</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1.9000</span>
       </span>
     </div>
@@ -138,9 +135,6 @@ From a set of input matrices and phenotype related to the same set of individual
     <div class="ref-description">
     <p>Selection of Interaction effects in COmpressed  Multiple Omics REpresentation</p>
 <p>Selection of Interaction effects in COmpressed  Multiple Omics REpresentation</p>
-<p>From a set of input matrices and phenotype related to the same set of individual, sicomore is a two-step method which
-1. find and select groups of correlated variables in each input matrix which are good predictors for the common phenotype
-2. find the most predictive interaction effects between the set of data by testing for interaction between the selected groups of each input matrix</p>
     </div>
 
     <pre class="usage"><span class='fu'>sicomore</span>(
@@ -231,7 +225,7 @@ Recommended for those who want to detect genomic-metagenomic interactions.</p></
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a RC object with class <code>sicomore</code> with methods <code><a href='https://rdrr.io/r/graphics/plot.html'>plot()</a></code>, <code>getSignificance()</code> and the following fields</p><ul>
+    <p>an RC object with class <code>sicomore</code> with methods <code><a href='https://rdrr.io/r/graphics/plot.html'>plot()</a></code>, <code>getSignificance()</code> and the following fields</p><ul>
 <li><p>pval:A matrix of p-values for each interactions effects between the compressed variables originating from 2 input matrices.</p></li>
 <li><p>pval.beta1:A matrix of p-values for the corresponding main effects of the compressed variables originating from the first input matrix</p></li>
 <li><p>pval.beta2:A matrix of p-values for the corresponding main effects of the compressed variables originating from thesecond input matrix</p></li>
@@ -241,11 +235,11 @@ Recommended for those who want to detect genomic-metagenomic interactions.</p></
 <li><p>dim: A array of integers specifying the dimension of the compressed matrices.</p></li>
 </ul>
 
-    <h2 class="hasAnchor" id="functions-in-sicomore"><a class="anchor" href="#functions-in-sicomore"></a>Functions in sicomore</h2>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    
-
-<p>TODO</p>
+    <p>From a set of input matrices and phenotype related to the same set of individual, sicomore is a two-step method which
+1. find and select groups of correlated variables in each input matrix which are good predictors for the common phenotype
+2. find the most predictive interaction effects between the set of data by testing for interaction between the selected groups of each input matrix</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Dehman A, Ambroise C, Neuvial P (2015).
@@ -263,7 +257,7 @@ Ph.D. thesis, Université de Lille.<br /><br /> Park MY, Hastie T, Tibshirani R 
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
-      <li><a href="#functions-in-sicomore">Functions in sicomore</a></li>
+      <li><a href="#details">Details</a></li>
       <li><a href="#references">References</a></li>
     </ul>
 
