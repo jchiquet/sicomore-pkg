@@ -1,14 +1,14 @@
 #' getHierLevel
 #'
-#' A function to select groups of variables which are good for predicting a given phenotype.
-#' The groups considered corresponds various cut levels in a user defined hierarchy.
-#' The selection is performed by various penalty-based regression methods.
+#' A function to select groups of variables which are good at predicting a given phenotype.
+#' The groups considered corresponds to various cut levels in a user defined hierarchy.
+#' The selection is performed by various penalty-based regression methods (weighted-LASSO or group-LASSO).
 #'
 #' @param X input matrix
 #' @param y response variable
 #' @param hierarchy output of a hierarchical clustering algorithm in the \code{hclust} format (must be an "hclust" object)
-#' @param selection method used to perform variable selection. Either 'sicomore', 'mlgl' or 'rho-sicomore' (see details). Default is 'sicomore'.
-#' @param compression a string (either "mean" or "SNP.dist"). Indicates how the groups of variables are compressed before variable selection at each level of the hierarchy.
+#' @param selection method used to perform variable selection. Either 'sicomore', 'rho-sicomore'  or 'mlgl' (see details). Default is 'rho-sicomore'.
+#' @param compression a string (either "mean" or "SNP.dist"). Indicates how groups of variables are compressed before variable selection is performed at each level of the hierarchy. Only relevant for 'sicomore' or 'rho-sicomore'.
 #' @param cut.levels a numeric vector, the level consider in the hierarchy. By default a sequence of 100 levels is used.
 #' @param choice a string (either "lambda.min" or "lambda.1se"). Indicates how the tuning parameter is chosen in the penalized regression approach
 #' @param depth.cut an integer specifying the depth of the search space for the variable selection part of the algorithm.
@@ -16,12 +16,12 @@
 #' A value between 3 and 6 is recommended, the smaller the faster.
 #' @param stab not yet documented
 #' @param stab.param not yet documented
-#' @param mc.cores an integer for the number of cores to use in the parallelization of the cross-validation and some other functions.
+#' @param mc.cores an integer for the number of cores to use in the parallelization of the cross-validation and some other functions. Default is 1.
 #'
-#' @details The methods for variable selection are variants of Lasso or group-Lasso designed to perform selection of interaction between multiple hierarchies:
-#' 'sicomore' and 'rho-sicomore' (see \insertCite{sicomore;textual}{sicomore}) use a LASSO penalty on compressed groups of variables along the hierarchies to select interactions.
-#' rho-sicomore is a variant where a more sound weighting scheme is used dependending on the level of the hierarchy considered. The method 'mlgl' of \insertCite{grimonprez_PhD;textual}{sicomore}
-#' uses a group-Lasso penalty which does not require compression but requires heavier computational resources.
+#' @details The methods for variable selection are variants of the LASSO or the group-LASSO designed to perform selection of interaction between multiple hierarchies:
+#' 'sicomore' and 'rho-sicomore' (see \insertCite{sicomore;textual}{sicomore}, \insertCite{park;textual}{sicomore}) use a LASSO penalty on compressed groups of variables along the hierarchies to select the
+#' interactions. The rho-sicomore variant is a weighted version of sicomore, which weights depend on the levels in the hierarchies. The method 'mlgl' of \insertCite{grimonprez_PhD;textual}{sicomore}
+#' uses a weigthed group-Lasso penalty which does not require compression but is more computationally demanding.
 #'
 #' @return an RC object with class 'sicomore-model', with methods \code{nGrp()}, \code{nVar()}, \code{getGrp()}, \code{getVar()}, \code{getCV()}, \code{getX.comp()}, \code{getCoef()} and with the following fields:
 #' \itemize{
@@ -36,7 +36,6 @@
 #' @import glmnet MLGL
 #' @export
 #' @importFrom Rdpack reprompt
-#' @importFrom doMC registerDoMC
 #' @references
 #' \insertAllCited{}
 getHierLevel <- function(X,
@@ -54,6 +53,7 @@ getHierLevel <- function(X,
   ## _________________________________________________________________
   ##
   ## PRETREATMENT
+  ##
   choice <- match.arg(choice)
 
   ## forcing the matrix type for glmnet
@@ -64,31 +64,35 @@ getHierLevel <- function(X,
 
   if (is.element(1,cut.levels)) {
     message("A cut level of 1 is not allowed: removing it from the list.")
-    cut.levels <- cut.levels[!(cut.levels %in% 1)]
+    cut.levels <- cut.levels[cut.levels != 1]
   }
 
   ## _________________________________________________________________
   ##
   ## GET THE BEST COMPRESSION LEVEL IN THE HIERARCHY
-  .getHier <- switch(selection,
-                     "rho-sicomore" = getHierLevel.rhosicomore,
-                     "sicomore"     = getHierLevel.sicomore,
-                     "mlgl"         = getHierLevel.MLGL)
+  ##
+  weights <- switch(selection,
+                     "rho-sicomore" = sqrt(1/abs(diff(hierarchy$height))),
+                     "sicomore"     = rep(1, length(hierarchy$height)),
+                     "mlgl"         = NULL)
+  if (selection == 'mlgl')
+    out <- .MLGL(X, y, hierarchy, choice)
+  else
+    out <- .sicomore(X, y, weights, hierarchy, compression, cut.levels, choice, depth.cut, mc.cores, stab, stab.param)
 
-  out <- .getHier(X, y, hierarchy, compression, cut.levels, choice, depth.cut, mc.cores, stab, stab.param)
-
+  ## _________________________________________________________________
+  ##
+  ## POST-TREATMENTS
+  ##
   if (length(out$groups) > 0) {
-    grouping <- rep(1:length(out$groups), sapply(out$groups, length))
-    X.comp   <- cbind(computeCompressedDataFrame(X[, unlist(out$groups)], grouping, compression))
+    grouping   <- rep(1:length(out$groups), sapply(out$groups, length))
+    X.comp     <- cbind(computeCompressedDataFrame(X[, unlist(out$groups)], grouping, compression))
+    out$groups <- setNames(out$groups, NULL)
     if(!stab) out$coefficients <- setNames(out$coefficients, paste("group", 1:length(out$groups)))
-    out$groups       <- setNames(out$groups, NULL)
   } else {
-    grouping <- cutree(hierarchy, k=1+which.max(rev(diff(hierarchy$height))))
-    X.comp <- cbind(computeCompressedDataFrame(X, grouping, compression))
+    grouping   <- cutree(hierarchy, k=1+which.max(rev(diff(hierarchy$height))))
+    X.comp     <- cbind(computeCompressedDataFrame(X, grouping, compression))
     out$groups <- split(1:ncol(X), grouping)
-  }
-  if (selection=="pval") {
-    criterion <- out$pval.count
   }
 
   res <- new("sicomore-model",
@@ -97,8 +101,8 @@ getHierLevel <- function(X,
              compression  = compression     ,
              selection    = selection       )
   if(!stab){
-    res$coefficients = out$coefficients
-    res$cv.error = out$cv
+    res$coefficients <- out$coefficients
+    res$cv.error     <- out$cv
   }
 
   res
@@ -110,9 +114,8 @@ getHierLevel <- function(X,
 ##
 ## explore the hierarchy to find the best level of compression (cut.levels are the best)
 ## The bottom of the hiearchy is discarded.... (too many variables :( )
-getHierLevel.rhosicomore <- function(X, y, hc.object, compression, cut.levels, choice, depth.cut, mc.cores, stab, stab.param) {
+.sicomore <- function(X, y, weights, hc.object, compression, cut.levels, choice, depth.cut, mc.cores, stab, stab.param) {
 
-  weights <- sqrt(1/abs(diff(hc.object$height)))
   cut.levels <- order(rev(c(max(weights),weights)))+1
   cut.levels <- cut.levels[cumsum(cut.levels) <= depth.cut*ncol(X)]
   weights <- c(0,rev(weights),0) # Reorder the weight to have a correspondance with cut.levels
@@ -127,8 +130,6 @@ getHierLevel.rhosicomore <- function(X, y, hc.object, compression, cut.levels, c
   Xcomp <- do.call(cbind,lapply(Xcomp.variables,function(variables) {computeCompressedDataFrameFromVariables(X, variables, compression)}))
 
   ## Adjusting the model
-  if (!is.null(mc.cores)) doMC::registerDoMC(cores=mc.cores)
-  else mc.cores = 1
   penalty.factor <- rep(weights[cut.levels],cut.levels)[uniqueIndex]
 
   if (stab == TRUE){
@@ -156,57 +157,13 @@ getHierLevel.rhosicomore <- function(X, y, hc.object, compression, cut.levels, c
 
 ## __________________________________________________________________
 ##
-## CROSS-VALIDATED COMPRESSED LASSO ALONG THE HIERARCHY
-##
-## explore the hierarchy to find the best level of compression
-getHierLevel.sicomore <- function(X, y, hc.object, compression, cut.levels, choice, depth.cut, mc.cores, stab, stab.param) {
-
-  ## recovering the hierarchies at each cuting level.
-  hierarchy <- lapply(apply(cutree(hc.object, k = cut.levels), 2, list), unlist, recursive=FALSE)
-
-  if (!is.null(mc.cores)) doMC::registerDoMC(cores=mc.cores)
-  else mc.cores = 1
-
-  Xcomp.variables <- unlist(lapply(hierarchy,function(group) {lapply(1:max(group),function(k){which(group==k)})}), recursive=FALSE)
-  uniqueIndex <- !duplicated(Xcomp.variables)
-  Xcomp.variables <- Xcomp.variables[uniqueIndex] # Eliminate the group which are present at different level of the hierarchy
-  Xcomp <- do.call(cbind,lapply(Xcomp.variables, function(variables) {computeCompressedDataFrameFromVariables(X, variables, compression)}))
-
-  if (stab == TRUE){
-       stab.lasso <- stabs::stabsel(x = Xcomp, y = y, B = stab.param$B,
-                          cutoff = stab.param$cutoff, PFER = stab.param$PFER,
-                          fitfun = glmnet.lasso, mc.cores = mc.cores, sampling.type = "MB")
-    selected.groups <- as.numeric(stab.lasso$selected)
-    groups <- Xcomp.variables[selected.groups]   # elements of each group of the best model
-    res <- list(groups = groups)
-
-  } else {
-    cv <- glmnet::cv.glmnet(Xcomp, y, parallel=!is.null(mc.cores))
-    selected.groups <- predict(cv, s=choice, type="nonzero")[[1]]
-    groups <- Xcomp.variables[selected.groups]   # elements of each group of the best model
-    coefficients <- predict(cv, s=choice, type="coefficients")[-1] # without intercept
-    coefficients <- coefficients[selected.groups]
-    res <- list(cv = data.frame(mean = cv$cvm, sd = cv$cvsd, lambda  = cv$lambda),
-                groups = groups, coefficients = coefficients)
-  }
-
-  res
-}
-
-## __________________________________________________________________
-##
 ## CROSS-VALIDATED MULTILAYER GROUP-LASSO ALONG THE HIERARCHY
 ##
-getHierLevel.MLGL <- function(X, y, hc.object, compression, cut.levels, choice, depth.cut, mc.cores, stab, stab.param) {
 
-  ## Grimponprez's weights
-  #weights <- c(0, sqrt(1/abs(diff(hc.object$height))), 0)
-  #weights[-(ncol(X)+1  - cut.levels)] <- 0
+.MLGL <- function(X, y, hc.object, choice, mc.cores) {
 
   ## Adjusting the model + cross-validation
-  #fit <- MLGL::MLGL(X, y, hc=hc.object, weightLevel = weights)
-  fit <- MLGL::MLGL(X, y)
-  #cv.error <- MLGL::cv.MLGL(X, y, hc=hc.object, weightLevel = weights)
+  fit      <- MLGL::MLGL(X, y)
   cv.error <- MLGL::cv.MLGL(X, y)
 
   ## Extracting the best model
@@ -214,13 +171,13 @@ getHierLevel.MLGL <- function(X, y, hc.object, compression, cut.levels, choice, 
                   "lambda.min" = match(cv.error$lambda.min, fit$lambda),
                   "lambda.1se" = match(cv.error$lambda.1se, fit$lambda))
   variables <- unname(unlist(fit$var[ibest]))
-  double <- which(duplicated(variables))
+  double    <- which(duplicated(variables))
   if (length(double) != 0){
     variables <- variables[-double]
-    fit.beta <- fit$beta[[ibest]][-double]
+    fit.beta  <- fit$beta[[ibest]][-double]
     fit.group <- fit$group[[ibest]][-double]
   } else {
-    fit.beta <- fit$beta[[ibest]]
+    fit.beta  <- fit$beta[[ibest]]
     fit.group <- fit$group[[ibest]]
   }
   o <- order(variables)
