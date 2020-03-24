@@ -34,7 +34,7 @@
   }
   mat <- rbind(NA, m2t, m1)
   mat[is.na(mat)] <- 0
-  return(mat)
+  mat
 }
 
 .rotate <- function(mat) { t(mat[nrow(mat):1,,drop=FALSE]) }
@@ -44,5 +44,5 @@
   for (ii in floor(l/2) : 1){
     heap <- .Call("percDown", heap, D, as.integer(l), as.integer(ii), PACKAGE="sicomore")
   }
-  return(heap)
+  heap
 }

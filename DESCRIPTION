@@ -46,7 +46,6 @@ Suggests:
   pkgdown
 VignetteBuilder: knitr
 Collate: 
-    'cWHeaps.R'
     'cWard.R'
     'cWard_function.R'
     'utils.R'
