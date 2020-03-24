@@ -8,7 +8,7 @@
 #' @author Christophe Ambroise \email{christophe.ambroise@@genopole.cnrs.fr}
 #'
 #' @docType package
-#' @useDynLib sicomore, .registration=TRUE
+#' @useDynLib sicomore, .registration = TRUE
 #' @importFrom stats cutree dist hclust lm median p.adjust pf predict setNames
 #' @importFrom methods new slot
 #' @importFrom Matrix sparseVector
