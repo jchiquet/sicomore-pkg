@@ -30,7 +30,6 @@ Imports:
   methods,
   ggplot2,
   Rdpack,
-  doMC,
   snpStats,
   matrixStats,
   adjclust,

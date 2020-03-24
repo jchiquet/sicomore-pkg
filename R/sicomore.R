@@ -22,7 +22,7 @@
 #' @param taxonomy a hierarchical tree object constructed using taxonomical unit.
 #' This argument could be useful if one want to provid a specific hierarchical tree based on taxonomy rather than euclidean distance.
 #' Recommended for those who want to detect genomic-metagenomic interactions.
-#' @param mc.cores an integer for the number of cores to use in the parallelization of the cross-validation and some other functions.
+#' @param mc.cores an integer for the number of cores to use in the parallelization of the cross-validation and some other functions. Default is 1.
 #' @param verbose not yet documented
 #' @param stab not yet documented
 #' @param stab.param not yet documented
@@ -54,7 +54,7 @@ sicomore <- function(y,
                      choice=c("lambda.min", "lambda.min"),
                      method.clus = c("ward.D2","ward.D2"),
                      depth.cut = c(3,3),
-                     mc.cores = NULL,
+                     mc.cores = 1,
                      taxonomy = NULL,
                      verbose = TRUE,
                      stab = TRUE,
@@ -85,9 +85,6 @@ sicomore <- function(y,
                                   stab, stab.param = lapply(stab.param, function(x) x[[i]]))
     }
     if (method.clus[i] == "noclust"){
-      if (!is.null(mc.cores)) doMC::registerDoMC(cores=mc.cores)
-      else mc.cores = 1
-
       if (stab == TRUE){
         stab.lasso <- stabs::stabsel(x = X.list[[i]], y = y, B = 50,
                               fitfun = stabs::glmnet.lasso, cutoff = 0.75,
@@ -131,8 +128,6 @@ sicomore <- function(y,
       names(group.name) <- c(colnames(taxonomy)[-1], "species")
       group.name <- do.call(c,group.name)
 
-      if (!is.null(mc.cores)) doMC::registerDoMC(cores=mc.cores)
-      else mc.cores = 1
       sel <- NULL
       while (length(sel) == 0){
         if(stab == TRUE){
