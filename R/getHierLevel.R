@@ -6,10 +6,8 @@
 #'
 #' @param X input matrix
 #' @param y response variable
-#' @param hierarchy the results of a hierarchical clustering algorithm, typically \code{hclust}. Must be an "hclust" object
-#' @param selection a string for the method used for variable selection for each data set.
-#' Specify "sicomore" to use the method specifically developed for the package, "hcar" to use the method developped by \insertCite{park;textual}{sicomore} or
-#' "mlgl" for the method of \insertCite{grimonprez_PhD;textual}{sicomore}.
+#' @param hierarchy output of a hierarchical clustering algorithm in the \code{hclust} format (must be an "hclust" object)
+#' @param selection method used to perform variable selection. Either 'sicomore', 'mlgl' or 'rho-sicomore' (see details). Default is 'sicomore'.
 #' @param compression a string (either "mean" or "SNP.dist"). Indicates how the groups of variables are compressed before variable selection at each level of the hierarchy.
 #' @param cut.levels a numeric vector, the level consider in the hierarchy. By default a sequence of 100 levels is used.
 #' @param choice a string (either "lambda.min" or "lambda.1se"). Indicates how the tuning parameter is chosen in the penalized regression approach
@@ -19,6 +17,11 @@
 #' @param stab not yet documented
 #' @param stab.param not yet documented
 #' @param mc.cores an integer for the number of cores to use in the parallelization of the cross-validation and some other functions.
+#'
+#' @details The methods for variable selection are variants of Lasso or group-Lasso designed to perform selection of interaction between multiple hierarchies:
+#' 'sicomore' and 'rho-sicomore' (see \insertCite{sicomore;textual}{sicomore}) use a LASSO penalty on compressed groups of variables along the hierarchies to select interactions.
+#' rho-sicomore is a variant where a more sound weighting scheme is used dependending on the level of the hierarchy considered. The method 'mlgl' of \insertCite{grimonprez_PhD;textual}{sicomore}
+#' uses a group-Lasso penalty which does not require compression but requires heavier computational resources.
 #'
 #' @return an RC object with class 'sicomore-model', with methods \code{nGrp()}, \code{nVar()}, \code{getGrp()}, \code{getVar()}, \code{getCV()}, \code{getX.comp()}, \code{getCoef()} and with the following fields:
 #' \itemize{
