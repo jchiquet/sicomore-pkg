@@ -36,9 +36,9 @@
 
 
 <meta property="og:title" content="getHierLevel — getHierLevel" />
-<meta property="og:description" content="A function to select groups of variables which are good for predicting a given phenotype.
-The groups considered corresponds various cut levels in a user defined hierarchy.
-The selection is performed by various penalty-based regression methods." />
+<meta property="og:description" content="A function to select groups of variables which are good at predicting a given phenotype.
+The groups considered corresponds to various cut levels in a user defined hierarchy.
+The selection is performed by various penalty-based regression methods (weighted-LASSO or group-LASSO)." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -134,9 +134,9 @@ The selection is performed by various penalty-based regression methods." />
     </div>
 
     <div class="ref-description">
-    <p>A function to select groups of variables which are good for predicting a given phenotype.
-The groups considered corresponds various cut levels in a user defined hierarchy.
-The selection is performed by various penalty-based regression methods.</p>
+    <p>A function to select groups of variables which are good at predicting a given phenotype.
+The groups considered corresponds to various cut levels in a user defined hierarchy.
+The selection is performed by various penalty-based regression methods (weighted-LASSO or group-LASSO).</p>
     </div>
 
     <pre class="usage"><span class='fu'>getHierLevel</span>(
@@ -166,19 +166,15 @@ The selection is performed by various penalty-based regression methods.</p>
     </tr>
     <tr>
       <th>hierarchy</th>
-      <td><p>the results of a hierarchical clustering algorithm, typically <code>hclust</code>. Must be an "hclust" object</p></td>
+      <td><p>output of a hierarchical clustering algorithm in the <code>hclust</code> format (must be an "hclust" object)</p></td>
     </tr>
     <tr>
       <th>selection</th>
-      <td><p>a string for the method used for variable selection for each data set.
-Specify "sicomore" to use the method specifically developed for the package, "hcar" to use the method developped by Park et al. (2007)
- or
-"mlgl" for the method of Grimonprez (2016)
-.</p></td>
+      <td><p>method used to perform variable selection. Either 'sicomore', 'rho-sicomore'  or 'mlgl' (see details). Default is 'rho-sicomore'.</p></td>
     </tr>
     <tr>
       <th>compression</th>
-      <td><p>a string (either "mean" or "SNP.dist"). Indicates how the groups of variables are compressed before variable selection at each level of the hierarchy.</p></td>
+      <td><p>a string (either "mean" or "SNP.dist"). Indicates how groups of variables are compressed before variable selection is performed at each level of the hierarchy. Only relevant for 'sicomore' or 'rho-sicomore'.</p></td>
     </tr>
     <tr>
       <th>depth.cut</th>
@@ -196,7 +192,7 @@ A value between 3 and 6 is recommended, the smaller the faster.</p></td>
     </tr>
     <tr>
       <th>mc.cores</th>
-      <td><p>an integer for the number of cores to use in the parallelization of the cross-validation and some other functions.</p></td>
+      <td><p>an integer for the number of cores to use in the parallelization of the cross-validation and some other functions. Default is 1.</p></td>
     </tr>
     <tr>
       <th>stab</th>
@@ -219,9 +215,20 @@ A value between 3 and 6 is recommended, the smaller the faster.</p></td>
 <li><p>compression:the compression method used</p></li>
 </ul>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The methods for variable selection are variants of the LASSO or the group-LASSO designed to perform selection of interaction between multiple hierarchies:
+'sicomore' and 'rho-sicomore' (see Ambroise et al. (2018)
+, Park et al. (2007)
+) use a LASSO penalty on compressed groups of variables along the hierarchies to select the
+interactions. The rho-sicomore variant is a weighted version of sicomore, which weights depend on the levels in the hierarchies. The method 'mlgl' of Grimonprez (2016)
+
+uses a weigthed group-Lasso penalty which does not require compression but is more computationally demanding.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Grimonprez Q (2016).
+    <p>Ambroise C, Chiquet J, Guinot F, Szafranski M (2018).
+&#8220;Fast Computation of Genome-Metagenome Interaction Effects.&#8221;
+<em>arXiv preprint arXiv:1810.12169</em>.<br /><br /> Grimonprez Q (2016).
 <em>Selection de groupes de variables corrélées en grande dimension</em>.
 Ph.D. thesis, Université de Lille.<br /><br /> Park MY, Hastie T, Tibshirani R (2007).
 &#8220;Averaged gene expressions for regression.&#8221;
@@ -233,6 +240,7 @@ Ph.D. thesis, Université de Lille.<br /><br /> Park MY, Hastie T, Tibshirani R 
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
+      <li><a href="#details">Details</a></li>
       <li><a href="#references">References</a></li>
     </ul>
 

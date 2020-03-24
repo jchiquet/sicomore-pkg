@@ -147,7 +147,7 @@ Selection of Interaction effects in COmpressed  Multiple Omics REpresentation" /
   <span class='kw'>choice</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"lambda.min"</span>, <span class='st'>"lambda.min"</span>),
   <span class='kw'>method.clus</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ward.D2"</span>, <span class='st'>"ward.D2"</span>),
   <span class='kw'>depth.cut</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>3</span>),
-  <span class='kw'>mc.cores</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>mc.cores</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>taxonomy</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>stab</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
@@ -171,11 +171,7 @@ Selection of Interaction effects in COmpressed  Multiple Omics REpresentation" /
     </tr>
     <tr>
       <th>selection</th>
-      <td><p>a string for the method used for variable selection for each data set.
-Specify "sicomore" to use the method specifically developed for the package, "hcar" to use the method developped by Park et al. (2007)
- or
-"mlgl" for the method of Grimonprez (2016)
-.</p></td>
+      <td><p>method used to perform variable selection. Either 'sicomore', 'mlgl' or 'rho-sicomore' (see details). Default is 'sicomore'.</p></td>
     </tr>
     <tr>
       <th>cuts</th>
@@ -201,7 +197,7 @@ A value between 3 and 6 is recommended, the smaller the faster.</p></td>
     </tr>
     <tr>
       <th>mc.cores</th>
-      <td><p>an integer for the number of cores to use in the parallelization of the cross-validation and some other functions.</p></td>
+      <td><p>an integer for the number of cores to use in the parallelization of the cross-validation and some other functions. Default is 1.</p></td>
     </tr>
     <tr>
       <th>taxonomy</th>
@@ -240,16 +236,22 @@ Recommended for those who want to detect genomic-metagenomic interactions.</p></
     <p>From a set of input matrices and phenotype related to the same set of individual, sicomore is a two-step method which
 1. find and select groups of correlated variables in each input matrix which are good predictors for the common phenotype
 2. find the most predictive interaction effects between the set of data by testing for interaction between the selected groups of each input matrix</p>
+<p>The methods for variable selection are variants of Lasso or group-Lasso designed to perform selection of interaction between multiple hierarchies:
+'sicomore' and 'rho-sicomore' (see Ambroise et al. (2018)
+) use a LASSO penalty on compressed groups of variables along the hierarchies to select interactions.
+rho-sicomore is a variant where a more sound weighting scheme is used dependending on the level of the hierarchy considered. The method 'mlgl' of Grimonprez (2016)
+
+uses a group-Lasso penalty which does not require compression but requires heavier computational resources.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Dehman A, Ambroise C, Neuvial P (2015).
+    <p>Ambroise C, Chiquet J, Guinot F, Szafranski M (2018).
+&#8220;Fast Computation of Genome-Metagenome Interaction Effects.&#8221;
+<em>arXiv preprint arXiv:1810.12169</em>.<br /><br /> Dehman A, Ambroise C, Neuvial P (2015).
 &#8220;Performance of a blockwise approach in variable
                   selection using linkage disequilibrium information.&#8221;
 <em>BMC Bioinformatics</em>, <b>16</b>, 148.<br /><br /> Grimonprez Q (2016).
 <em>Selection de groupes de variables corrélées en grande dimension</em>.
-Ph.D. thesis, Université de Lille.<br /><br /> Park MY, Hastie T, Tibshirani R (2007).
-&#8220;Averaged gene expressions for regression.&#8221;
-<em>Biostatistics</em>, <b>8</b>(2), 212--227.</p>
+Ph.D. thesis, Université de Lille.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
