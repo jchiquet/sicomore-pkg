@@ -23,13 +23,11 @@ getHierLevel(
 
 \item{y}{response variable}
 
-\item{hierarchy}{the results of a hierarchical clustering algorithm, typically \code{hclust}. Must be an "hclust" object}
+\item{hierarchy}{output of a hierarchical clustering algorithm in the \code{hclust} format (must be an "hclust" object)}
 
-\item{selection}{a string for the method used for variable selection for each data set.
-Specify "sicomore" to use the method specifically developed for the package, "hcar" to use the method developped by \insertCite{park;textual}{sicomore} or
-"mlgl" for the method of \insertCite{grimonprez_PhD;textual}{sicomore}.}
+\item{selection}{method used to perform variable selection. Either 'sicomore', 'rho-sicomore'  or 'mlgl' (see details). Default is 'rho-sicomore'.}
 
-\item{compression}{a string (either "mean" or "SNP.dist"). Indicates how the groups of variables are compressed before variable selection at each level of the hierarchy.}
+\item{compression}{a string (either "mean" or "SNP.dist"). Indicates how groups of variables are compressed before variable selection is performed at each level of the hierarchy. Only relevant for 'sicomore' or 'rho-sicomore'.}
 
 \item{depth.cut}{an integer specifying the depth of the search space for the variable selection part of the algorithm.
 This argument allows to increase the speed of the algorithm by restraining the search space without affecting too much the performance.
@@ -39,7 +37,7 @@ A value between 3 and 6 is recommended, the smaller the faster.}
 
 \item{choice}{a string (either "lambda.min" or "lambda.1se"). Indicates how the tuning parameter is chosen in the penalized regression approach}
 
-\item{mc.cores}{an integer for the number of cores to use in the parallelization of the cross-validation and some other functions.}
+\item{mc.cores}{an integer for the number of cores to use in the parallelization of the cross-validation and some other functions. Default is 1.}
 
 \item{stab}{not yet documented}
 
@@ -57,9 +55,15 @@ an RC object with class 'sicomore-model', with methods \code{nGrp()}, \code{nVar
 }
 }
 \description{
-A function to select groups of variables which are good for predicting a given phenotype.
-The groups considered corresponds various cut levels in a user defined hierarchy.
-The selection is performed by various penalty-based regression methods.
+A function to select groups of variables which are good at predicting a given phenotype.
+The groups considered corresponds to various cut levels in a user defined hierarchy.
+The selection is performed by various penalty-based regression methods (weighted-LASSO or group-LASSO).
+}
+\details{
+The methods for variable selection are variants of the LASSO or the group-LASSO designed to perform selection of interaction between multiple hierarchies:
+'sicomore' and 'rho-sicomore' (see \insertCite{sicomore;textual}{sicomore}, \insertCite{park;textual}{sicomore}) use a LASSO penalty on compressed groups of variables along the hierarchies to select the
+interactions. The rho-sicomore variant is a weighted version of sicomore, which weights depend on the levels in the hierarchies. The method 'mlgl' of \insertCite{grimonprez_PhD;textual}{sicomore}
+uses a weigthed group-Lasso penalty which does not require compression but is more computationally demanding.
 }
 \references{
 \insertAllCited{}

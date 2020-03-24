@@ -15,7 +15,7 @@ sicomore(
   choice = c("lambda.min", "lambda.min"),
   method.clus = c("ward.D2", "ward.D2"),
   depth.cut = c(3, 3),
-  mc.cores = NULL,
+  mc.cores = 1,
   taxonomy = NULL,
   verbose = TRUE,
   stab = TRUE,
@@ -29,9 +29,7 @@ sicomore(
 
 \item{compressions}{a vector of string for the compression methods for each data sets. Default used the mean to compressed predictors in the same group.}
 
-\item{selection}{a string for the method used for variable selection for each data set.
-Specify "sicomore" to use the method specifically developed for the package, "hcar" to use the method developped by \insertCite{park;textual}{sicomore} or
-"mlgl" for the method of \insertCite{grimonprez_PhD;textual}{sicomore}.}
+\item{selection}{method used to perform variable selection. Either 'sicomore', 'mlgl' or 'rho-sicomore' (see details). Default is 'sicomore'.}
 
 \item{cuts}{a list of numeric vector defining the cut levels to be considered for each hierarchy. By default a sequence of 100 levels is used.}
 
@@ -46,7 +44,7 @@ It is also possible to specify no hierarchy with "noclust".}
 This argument allows to increase the speed of the algorithm by restraining the search space without affecting too much the performance.
 A value between 3 and 6 is recommended, the smaller the faster.}
 
-\item{mc.cores}{an integer for the number of cores to use in the parallelization of the cross-validation and some other functions.}
+\item{mc.cores}{an integer for the number of cores to use in the parallelization of the cross-validation and some other functions. Default is 1.}
 
 \item{taxonomy}{a hierarchical tree object constructed using taxonomical unit.
 This argument could be useful if one want to provid a specific hierarchical tree based on taxonomy rather than euclidean distance.
@@ -79,6 +77,11 @@ Selection of Interaction effects in COmpressed  Multiple Omics REpresentation
 From a set of input matrices and phenotype related to the same set of individual, sicomore is a two-step method which
 1. find and select groups of correlated variables in each input matrix which are good predictors for the common phenotype
 2. find the most predictive interaction effects between the set of data by testing for interaction between the selected groups of each input matrix
+
+The methods for variable selection are variants of Lasso or group-Lasso designed to perform selection of interaction between multiple hierarchies:
+'sicomore' and 'rho-sicomore' (see \insertCite{sicomore;textual}{sicomore}) use a LASSO penalty on compressed groups of variables along the hierarchies to select interactions.
+rho-sicomore is a variant where a more sound weighting scheme is used dependending on the level of the hierarchy considered. The method 'mlgl' of \insertCite{grimonprez_PhD;textual}{sicomore}
+uses a group-Lasso penalty which does not require compression but requires heavier computational resources.
 }
 \references{
 \insertAllCited{}
