@@ -117,7 +117,7 @@ getHierLevel <- function(X,
 
   cut.levels <- order(rev(c(max(weights),weights))) + 1
   cut.levels <- cut.levels[cumsum(cut.levels) <= depth.cut*ncol(X)]
-  n.grp.levels <- sapply(cut.levels, function(k) n_distinct(cutree(hc.object, k = k)))
+  n.grp.levels <- sapply(cut.levels, function(k) length(unique(cutree(hc.object, k = k))))
   if (!is.null(grp.min) & any(n.grp.levels <= grp.min)) cut.levels[-which(n.grp.levels <= grp.min)] ## Remove out high levels in the hierarchy
   weights <- c(0,rev(weights),0) # Reorder the weight to have a correspondance with cut.levels
 
