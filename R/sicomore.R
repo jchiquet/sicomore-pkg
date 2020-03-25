@@ -14,7 +14,6 @@
 #' To use an SNP-specific spatially contrained hierarchical clustering \insertCite{dehman}{sicomore} from package adjclust, specify "snpClust".
 #' It is also possible to specify no hierarchy with "noclust".
 #' @param selection method used to perform variable selection. Either 'sicomore', 'mlgl' or 'rho-sicomore' (see details). Default is 'sicomore'.
-#' @param cuts a list of numeric vector defining the cut levels to be considered for each hierarchy. By default a sequence of 100 levels is used.
 #' @param choice a string (either "lambda.min" or "lambda.1se"). Indicates how the tuning parameter is chosen in the penalized regression approach.
 #' @param depth.cut a vector of integers specifying the depth of the search space for the variable selection part of the algorithm.
 #' This argument allows to increase the speed of the algorithm by restraining the search space without affecting too much the performance.
@@ -27,8 +26,8 @@
 #' @param stab A boolean indicating if the algorithm perform a lasso stability selection using stabsel function from stabs package.
 #' @param stab.param A list of parameter for the stabsel function if stab = TRUE.
 #' The parameters to choose are the FWER (1 by default), cut-off (0.75 by default) and bootstrap number (200 by default).
-#' @param grp.min Minimum number of groups to consider for the highest level in the hierarchy.
-#' Correspond to the highest allowed cut in the hierarchy. If NULL, no restriction is given.
+#' @param grp.min A numeric vector for the minimum number of groups to consider for the highest level in each hierarchy.
+#' Correspond to the highest allowed cut in the hierarchy. If NA, no restriction is given.
 #' @details The methods for variable selection are variants of Lasso or group-Lasso designed to perform selection of interaction between multiple hierarchies:
 #' 'sicomore' and 'rho-sicomore' (see \insertCite{sicomore;textual}{sicomore}) use a LASSO penalty on compressed groups of variables along the hierarchies to select interactions.
 #' rho-sicomore is a variant where a more sound weighting scheme is used dependending on the level of the hierarchy considered. The method 'mlgl' of \insertCite{grimonprez_PhD;textual}{sicomore}
@@ -55,7 +54,7 @@ sicomore <- function(y,
                      choice=c("lambda.min", "lambda.min"),
                      method.clus = c("ward.D2","ward.D2"),
                      depth.cut = c(3,3),
-                     grp.min = NULL,
+                     grp.min = c(NA,NA),
                      mc.cores = 1,
                      taxonomy = NULL,
                      verbose = TRUE,
@@ -79,7 +78,8 @@ sicomore <- function(y,
                                   choice=choice[i],
                                   depth.cut = depth.cut[i],
                                   mc.cores=mc.cores,
-                                  stab, stab.param = lapply(stab.param, function(x) x[[i]]))
+                                  stab, stab.param = lapply(stab.param, function(x) x[[i]]),
+                                  grp.min = grp.min[i])
     }
     if (method.clus[i] == "snpClust") {
       if (ncol(X.list[[i]]) > 600) h <- 600
@@ -92,7 +92,8 @@ sicomore <- function(y,
                                   compression=compressions[i],
                                   selection=selection, choice=choice[i],
                                   depth.cut = depth.cut[i], mc.cores=mc.cores,
-                                  stab = stab, stab.param = lapply(stab.param, function(x) x[[i]]))
+                                  stab = stab, stab.param = lapply(stab.param, function(x) x[[i]]),
+                                  grp.min = grp.min[i])
 
       sapply(models[[i]]$getGrp(), length)
     }

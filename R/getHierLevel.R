@@ -9,7 +9,6 @@
 #' @param hc.object output of a hierarchical clustering algorithm in the \code{hclust} format (must be an "hclust" object)
 #' @param selection method used to perform variable selection. Either 'sicomore', 'rho-sicomore'  or 'mlgl' (see details). Default is 'rho-sicomore'.
 #' @param compression a string (either "mean" or "SNP.dist"). Indicates how groups of variables are compressed before variable selection is performed at each level of the hierarchy. Only relevant for 'sicomore' or 'rho-sicomore'.
-#' @param cut.levels a numeric vector, the level consider in the hierarchy. By default a sequence of 100 levels is used.
 #' @param choice a string (either "lambda.min" or "lambda.1se"). Indicates how the tuning parameter is chosen in the penalized regression approach
 #' @param depth.cut an integer specifying the depth of the search space for the variable selection part of the algorithm.
 #' This argument allows to increase the speed of the algorithm by restraining the search space without affecting too much the performance.
@@ -17,7 +16,8 @@
 #' @param stab A boolean indicating if the algorithm perform a lasso stability selection using stabsel function from stabs package.
 #' @param stab.param A list of parameter for the stabsel function if stab = TRUE.
 #' The parameters to choose are the FWER (1 by default), cut-off (0.75 by default) and bootstrap number (200 by default).
-#' @param grp.min Minimum number of groups to consider for the highest level in the hierarchy. Correspond to the highest allowed cut in the hierarchy.
+#' @param grp.min Minimum number of groups to consider for the highest level in the hierarchy.
+#' Correspond to the highest allowed cut in the hierarchy. If NA, no restriction is given.
 #' @param mc.cores an integer for the number of cores to use in the parallelization of the cross-validation and some other functions. Default is 1.
 #'
 #' @details The methods for variable selection are variants of the LASSO or the group-LASSO designed to perform selection of interaction between multiple hierarchies:
@@ -118,7 +118,7 @@ getHierLevel <- function(X,
   cut.levels <- order(rev(c(max(weights),weights))) + 1
   cut.levels <- cut.levels[cumsum(cut.levels) <= depth.cut*ncol(X)]
   n.grp.levels <- sapply(cut.levels, function(k) length(unique(cutree(hc.object, k = k))))
-  if (!is.null(grp.min) & any(n.grp.levels <= grp.min)) cut.levels[-which(n.grp.levels <= grp.min)] ## Remove out high levels in the hierarchy
+  if (!is.na(grp.min) & any(n.grp.levels <= grp.min)) cut.levels[-which(n.grp.levels <= grp.min)] ## Remove out high levels in the hierarchy
   weights <- c(0,rev(weights),0) # Reorder the weight to have a correspondance with cut.levels
 
   ## Build a data frame with all compressed variables from interesting cut levels
