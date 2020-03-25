@@ -142,11 +142,10 @@ Selection of Interaction effects in COmpressed  Multiple Omics REpresentation" /
   <span class='no'>X.list</span>,
   <span class='kw'>compressions</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='st'>"mean"</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>X.list</span>)),
   <span class='kw'>selection</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"rho-sicomore"</span>, <span class='st'>"sicomore"</span>, <span class='st'>"mlgl"</span>),
-  <span class='kw'>cuts</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='no'>X.list</span>, <span class='kw'>function</span>(<span class='no'>X</span>) <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Round.html'>round</a></span>(<span class='fl'>10</span>^<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log10</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>ncol</a></span>(<span class='no'>X</span>)), <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log10</a></span>(<span class='fl'>2</span>), <span class='kw'>len</span> <span class='kw'>=</span>
-    <span class='fl'>100</span>)))),
   <span class='kw'>choice</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"lambda.min"</span>, <span class='st'>"lambda.min"</span>),
   <span class='kw'>method.clus</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ward.D2"</span>, <span class='st'>"ward.D2"</span>),
   <span class='kw'>depth.cut</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>3</span>),
+  <span class='kw'>grp.min</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>mc.cores</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>taxonomy</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
@@ -174,10 +173,6 @@ Selection of Interaction effects in COmpressed  Multiple Omics REpresentation" /
       <td><p>method used to perform variable selection. Either 'sicomore', 'mlgl' or 'rho-sicomore' (see details). Default is 'sicomore'.</p></td>
     </tr>
     <tr>
-      <th>cuts</th>
-      <td><p>a list of numeric vector defining the cut levels to be considered for each hierarchy. By default a sequence of 100 levels is used.</p></td>
-    </tr>
-    <tr>
       <th>choice</th>
       <td><p>a string (either "lambda.min" or "lambda.1se"). Indicates how the tuning parameter is chosen in the penalized regression approach.</p></td>
     </tr>
@@ -196,6 +191,11 @@ This argument allows to increase the speed of the algorithm by restraining the s
 A value between 3 and 6 is recommended, the smaller the faster.</p></td>
     </tr>
     <tr>
+      <th>grp.min</th>
+      <td><p>an interger for the minimum number of groups to consider for a given level. Correspond to the highest allowed cut in the hierarchy.
+If NULL, no restriction is given.</p></td>
+    </tr>
+    <tr>
       <th>mc.cores</th>
       <td><p>an integer for the number of cores to use in the parallelization of the cross-validation and some other functions. Default is 1.</p></td>
     </tr>
@@ -211,11 +211,16 @@ Recommended for those who want to detect genomic-metagenomic interactions.</p></
     </tr>
     <tr>
       <th>stab</th>
-      <td><p>not yet documented</p></td>
+      <td><p>A boolean indicating if the algorithm perform a lasso stability selection using stabsel function from stabs package.</p></td>
     </tr>
     <tr>
       <th>stab.param</th>
-      <td><p>not yet documented</p></td>
+      <td><p>A list of parameter for the stabsel function if stab = TRUE.
+The parameters to choose are the FWER (1 by default), cut-off (0.75 by default) and bootstrap number (200 by default).</p></td>
+    </tr>
+    <tr>
+      <th>cuts</th>
+      <td><p>a list of numeric vector defining the cut levels to be considered for each hierarchy. By default a sequence of 100 levels is used.</p></td>
     </tr>
     </table>
 
