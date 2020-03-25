@@ -24,9 +24,11 @@
 #' Recommended for those who want to detect genomic-metagenomic interactions.
 #' @param mc.cores an integer for the number of cores to use in the parallelization of the cross-validation and some other functions. Default is 1.
 #' @param verbose not yet documented
-#' @param stab not yet documented
-#' @param stab.param not yet documented
-#'
+#' @param stab A boolean indicating if the algorithm perform a lasso stability selection using stabsel function from stabs package.
+#' @param stab.param A list of parameter for the stabsel function if stab = TRUE.
+#' The parameters to choose are the FWER (1 by default), cut-off (0.75 by default) and bootstrap number (200 by default).
+#' @param grp.min Minimum number of groups to consider for the highest level in the hierarchy.
+#' Correspond to the highest allowed cut in the hierarchy. If NULL, no restriction is given.
 #' @details The methods for variable selection are variants of Lasso or group-Lasso designed to perform selection of interaction between multiple hierarchies:
 #' 'sicomore' and 'rho-sicomore' (see \insertCite{sicomore;textual}{sicomore}) use a LASSO penalty on compressed groups of variables along the hierarchies to select interactions.
 #' rho-sicomore is a variant where a more sound weighting scheme is used dependending on the level of the hierarchy considered. The method 'mlgl' of \insertCite{grimonprez_PhD;textual}{sicomore}
@@ -50,10 +52,10 @@ sicomore <- function(y,
                      X.list,
                      compressions = rep("mean", length(X.list)),
                      selection =  c("rho-sicomore", "sicomore", "mlgl"),
-                     cuts = lapply(X.list, function(X) unique(round(10^seq(log10(ncol(X)), log10(2), len=100)))),
                      choice=c("lambda.min", "lambda.min"),
                      method.clus = c("ward.D2","ward.D2"),
                      depth.cut = c(3,3),
+                     grp.min = NULL,
                      mc.cores = 1,
                      taxonomy = NULL,
                      verbose = TRUE,
@@ -70,8 +72,13 @@ sicomore <- function(y,
 
     if (method.clus[i] == "ward.D2"){
       hierarchies[[i]] <- hclust(dist(t(scale(X.list[[i]]))), method="ward.D2")
-      models[[i]] <- getHierLevel(X = X.list[[i]], y, hierarchies[[i]], cut.levels = cuts[[i]], compression=compressions[i],
-                                  selection=selection, choice=choice[i], depth.cut = depth.cut[i], mc.cores=mc.cores,
+      models[[i]] <- getHierLevel(X = X.list[[i]], y,
+                                  hc.object = hierarchies[[i]],
+                                  compression=compressions[i],
+                                  selection=selection,
+                                  choice=choice[i],
+                                  depth.cut = depth.cut[i],
+                                  mc.cores=mc.cores,
                                   stab, stab.param = lapply(stab.param, function(x) x[[i]]))
     }
     if (method.clus[i] == "snpClust") {
@@ -80,9 +87,14 @@ sicomore <- function(y,
       #hierarchies[[i]] <- adjclust::snpClust(X.list[[i]], h=h)
       hierarchies[[i]] <- cWard(X.list[[i]], h)
 
-      models[[i]] <- getHierLevel(X.list[[i]], y, hierarchies[[i]], cut.levels = cuts[[i]], compression=compressions[i],
-                                  selection=selection, choice=choice[i], depth.cut = depth.cut[i], mc.cores=mc.cores,
-                                  stab, stab.param = lapply(stab.param, function(x) x[[i]]))
+      models[[i]] <- getHierLevel(X = X.list[[i]], y = y,
+                                  hc.object = hierarchies[[i]],
+                                  compression=compressions[i],
+                                  selection=selection, choice=choice[i],
+                                  depth.cut = depth.cut[i], mc.cores=mc.cores,
+                                  stab = stab, stab.param = lapply(stab.param, function(x) x[[i]]))
+
+      sapply(models[[i]]$getGrp(), length)
     }
     if (method.clus[i] == "noclust"){
       if (stab == TRUE){
