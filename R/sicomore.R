@@ -94,8 +94,6 @@ sicomore <- function(y,
                                   depth.cut = depth.cut[i], mc.cores=mc.cores,
                                   stab = stab, stab.param = lapply(stab.param, function(x) x[[i]]),
                                   grp.min = grp.min[i])
-
-      sapply(models[[i]]$getGrp(), length)
     }
     if (method.clus[i] == "noclust"){
       if (stab == TRUE){

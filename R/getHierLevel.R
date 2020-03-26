@@ -33,6 +33,7 @@
 #'  \item{cv.error:}{for the best grouping, a data frame showing the cross-validation error used in the variable selection procedure if stab=FALSE}
 #'  \item{selection:}{the selection method used}
 #'  \item{compression:}{the compression method used}
+#'  \item{group_inference:}{the group selection infered by "lasso" or "hclust" if no selection by lasso.}
 #' }
 #' @include utils.R
 #' @import glmnet MLGL
@@ -46,7 +47,7 @@ getHierLevel <- function(X,
                          selection = c("rho-sicomore", "sicomore", "mlgl"),
                          compression = "mean",
                          depth.cut = 3,
-                         grp.min = NULL,
+                         grp.min = NA,
                          choice=c("lambda.min", "lambda.1se"),
                          mc.cores=NULL,
                          stab = FALSE,
@@ -82,22 +83,25 @@ getHierLevel <- function(X,
   ##
   ## POST-TREATMENTS
   ##
+
+  res <- new("sicomore-model",
+             compression  = compression     ,
+             selection    = selection       )
+
   if (length(out$groups) > 0) {
     grouping   <- rep(1:length(out$groups), sapply(out$groups, length))
     X.comp     <- cbind(computeCompressedDataFrame(X[, unlist(out$groups)], grouping, compression))
     out$groups <- setNames(out$groups, NULL)
     if(!stab) out$coefficients <- setNames(out$coefficients, paste("group", 1:length(out$groups)))
+    res$group_inference <- "lasso"
   } else {
     grouping   <- cutree(hc.object, k=1+which.max(rev(diff(hc.object$height))))
     X.comp     <- cbind(computeCompressedDataFrame(X, grouping, compression))
     out$groups <- split(1:ncol(X), grouping)
+    res$group_inference <- "hclust"
   }
-
-  res <- new("sicomore-model",
-             groups       = out$groups      ,
-             X.comp       = X.comp          ,
-             compression  = compression     ,
-             selection    = selection       )
+  res$groups <- out$groups
+  res$X.comp <- X.comp
   if(!stab){
     res$coefficients <- out$coefficients
     res$cv.error     <- out$cv
