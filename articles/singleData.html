@@ -6,19 +6,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Analysis of a single Data set with SIComORe • sicomore</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Analysis of a single Data set with SIComORe">
-<meta property="og:description" content="">
-<meta name="twitter:card" content="summary">
+<meta property="og:description" content="sicomore">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body>
+<body data-spy="scroll" data-target="#toc">
     <div class="container template-article">
       <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sicomore</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1-9000</span>
       </span>
     </div>
 
@@ -88,13 +88,13 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Analysis of a single Data set with SIComORe</h1>
+      <h1 data-toc-skip>Analysis of a single Data set with SIComORe</h1>
             <h3 class="subtitle">Finding a relevant group structure to predict a phenotype</h3>
                         <h4 class="author">SIComORe team</h4>
             
-            <h4 class="date">2020-03-25</h4>
+            <h4 class="date">2020-03-26</h4>
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/jchiquet/sicomore-pkg/blob/master/vignettes/singleData.Rmd"><code>vignettes/singleData.Rmd</code></a></small>
       <div class="hidden name"><code>singleData.Rmd</code></div>
 
     </div>
@@ -106,13 +106,13 @@
 <h2 class="hasAnchor">
 <a href="#requirements" class="anchor"></a>Requirements</h2>
 <p>On top of <code>sicomore</code>, this will require a couple of standard packages tailored for data manipulation, representation or benchmarking:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="dv">1234</span>)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(sicomore)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(tidyverse)</a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(corrplot)</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(microbenchmark)</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(mvtnorm)</a>
-<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(Matrix)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">1234</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">sicomore</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyverse</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">corrplot</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">microbenchmark</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">mvtnorm</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">Matrix</span>)</pre></body></html></div>
 </div>
 <div id="statistical-model" class="section level2">
 <h2 class="hasAnchor">
@@ -144,34 +144,34 @@
 <h3 class="hasAnchor">
 <a href="#group-structured-matrix-of-predictors" class="anchor"></a>Group-structured Matrix of predictors</h3>
 <p>We define a matrix of predictors <span class="math inline">\(\mathbf{X}\)</span> containing <span class="math inline">\(p = 200\)</span> columns (or variables) spreaded into a structure pf group <span class="math inline">\(\mathcal{G} = \{g_k,k=1,\dots,K\}\)</span> with <span class="math inline">\(K = 113\)</span> groups: 3 groups of 30 variables + 110 groups with a single variable.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">grp_size &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">30</span>, <span class="dv">30</span>, <span class="dv">30</span>, <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span>,<span class="dv">110</span>))</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">K &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(grp_size) <span class="co"># number of groups </span></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3">p &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(grp_size)    <span class="co"># the number of variables</span></a></code></pre></div>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">grp_size</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">30</span>, <span class="fl">30</span>, <span class="fl">30</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>,<span class="fl">110</span>))
+<span class="no">K</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">grp_size</span>) <span class="co"># number of groups </span>
+<span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">grp_size</span>)    <span class="co"># the number of variables</span></pre></body></html></div>
 <p>We then define a covariance matrix <span class="math inline">\(\Sigma_X\)</span> the structure of which is faithful to the original grouping of the variables</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">Sigma &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(K,.<span class="dv">5</span>,.<span class="dv">95</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="co"># a vector defining within-group correlation</span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="st">  </span><span class="kw">map2</span>(grp_size, <span class="op">~</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(.x, .y, .y)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/Matrix/man/bdiag.html">bdiag</a></span>()</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="kw"><a href="https://rdrr.io/r/base/diag.html">diag</a></span>(Sigma) &lt;-<span class="st"> </span><span class="dv">1</span></a></code></pre></div>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">Sigma</span> <span class="kw">&lt;-</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="no">K</span>,<span class="fl">.5</span>,<span class="fl">.95</span>) <span class="kw">%&gt;%</span> <span class="co"># a vector defining within-group correlation</span>
+  <span class="fu">map2</span>(<span class="no">grp_size</span>, ~ <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="no">.x</span>, <span class="no">.y</span>, <span class="no">.y</span>)) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/bdiag.html">bdiag</a></span>()
+<span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span>(<span class="no">Sigma</span>) <span class="kw">&lt;-</span> <span class="fl">1</span></pre></body></html></div>
 <p>We then draw <span class="math inline">\(n = 100\)</span> observations of a centered multivariate Gaussian vector with covariance <span class="math inline">\(\Sigma_X\)</span>:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">n &lt;-<span class="st"> </span><span class="dv">100</span> <span class="co"># sample size</span></a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">X &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/mvtnorm/man/Mvnorm.html">rmvnorm</a></span>(n, <span class="dt">sigma =</span> <span class="kw"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span>(Sigma))</a></code></pre></div>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">n</span> <span class="kw">&lt;-</span> <span class="fl">100</span> <span class="co"># sample size</span>
+<span class="no">X</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mvtnorm/man/Mvnorm.html">rmvnorm</a></span>(<span class="no">n</span>, <span class="kw">sigma</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span>(<span class="no">Sigma</span>))</pre></body></html></div>
 <p>The matrix of empirical correlations of <span class="math inline">\(X\)</span> clearly show that the group structure is well embedded in the data:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/pkg/corrplot/man/corrplot.html">corrplot</a></span>(<span class="kw"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span>(X), <span class="dt">method =</span> <span class="st">"color"</span>, <span class="dt">tl.pos =</span> <span class="st">"n"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/corrplot/man/corrplot.html">corrplot</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span>(<span class="no">X</span>), <span class="kw">method</span> <span class="kw">=</span> <span class="st">"color"</span>, <span class="kw">tl.pos</span> <span class="kw">=</span> <span class="st">"n"</span>)</pre></body></html></div>
 <p><img src="singleData_files/figure-html/unnamed-chunk-1-1.png" width="672"></p>
 </div>
 <div id="phenotyperesponse-vector" class="section level3">
 <h3 class="hasAnchor">
 <a href="#phenotyperesponse-vector" class="anchor"></a>Phenotype/Response vector</h3>
 <p>The phenotype is a linear combinaison of the <em>compressed</em> version of the predictors. Here, we use the mean to compressed a group of variables:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">grp_ind &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">1</span><span class="op">:</span>K, grp_size) <span class="co"># vector of group indices</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2">X_comp  &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/rowsum.html">rowsum</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/t.html">t</a></span>(X), grp_ind)<span class="op">/</span><span class="kw"><a href="https://rdrr.io/r/base/tabulate.html">tabulate</a></span>(grp_ind))</a></code></pre></div>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">grp_ind</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>:<span class="no">K</span>, <span class="no">grp_size</span>) <span class="co"># vector of group indices</span>
+<span class="no">X_comp</span>  <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rowsum.html">rowsum</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="no">X</span>), <span class="no">grp_ind</span>)/<span class="fu"><a href="https://rdrr.io/r/base/tabulate.html">tabulate</a></span>(<span class="no">grp_ind</span>))</pre></body></html></div>
 <p>The vector of regression parameters <span class="math inline">\(\beta\)</span> is sparse, chosen such that the first two group are predictive:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">theta &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">0</span>, <span class="kw"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(X_comp))</a>
-<a class="sourceLine" id="cb7-2" data-line-number="2">theta[<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>)] &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="dv">2</span>, <span class="dt">min=</span><span class="dv">5</span>, <span class="dt">max=</span><span class="dv">10</span>) ## simple effects on the first two groups</a></code></pre></div>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">theta</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(<span class="no">X_comp</span>))
+<span class="no">theta</span>[<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>)] <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="fl">2</span>, <span class="kw">min</span><span class="kw">=</span><span class="fl">5</span>, <span class="kw">max</span><span class="kw">=</span><span class="fl">10</span>) <span class="co">## simple effects on the first two groups</span></pre></body></html></div>
 <p>Finally, the response vector <span class="math inline">\(y\)</span> is drawn from a linear model. The level of noise is chosen such that the <span class="math inline">\(R^2\approx 0.75\)</span> on average.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">sigma &lt;-<span class="st"> </span><span class="dv">5</span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">epsilon &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span>(n) <span class="op">*</span><span class="st"> </span>sigma</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3">y &lt;-<span class="st"> </span>X_comp <span class="op">%*%</span><span class="st"> </span>theta <span class="op">+</span><span class="st"> </span>epsilon</a></code></pre></div>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">sigma</span> <span class="kw">&lt;-</span> <span class="fl">5</span>
+<span class="no">epsilon</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span>(<span class="no">n</span>) * <span class="no">sigma</span>
+<span class="no">y</span> <span class="kw">&lt;-</span> <span class="no">X_comp</span> <span class="kw">%*%</span> <span class="no">theta</span> + <span class="no">epsilon</span></pre></body></html></div>
 </div>
 </div>
 <div id="adjusting-a-single-hierarchy" class="section level2">
@@ -181,32 +181,32 @@
 <div id="retrieving-a-hierarchy" class="section level3">
 <h3 class="hasAnchor">
 <a href="#retrieving-a-hierarchy" class="anchor"></a>Retrieving a hierarchy</h3>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">hierarchy &lt;-<span class="st"> </span></a>
-<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="st">  </span>X <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/scale.html">scale</a></span>() <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/t.html">t</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/stats/dist.html">dist</a></span>(<span class="dt">method =</span> <span class="st">"euclidean"</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/r/stats/hclust.html">hclust</a></span>(<span class="dt">method=</span><span class="st">"ward.D2"</span>)</a>
-<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(hierarchy, <span class="dt">main =</span> <span class="st">"Hierarchical clustering on the input matrix of predictors"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">hierarchy</span> <span class="kw">&lt;-</span>
+  <span class="no">X</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html">scale</a></span>() <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>() <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/dist.html">dist</a></span>(<span class="kw">method</span> <span class="kw">=</span> <span class="st">"euclidean"</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/hclust.html">hclust</a></span>(<span class="kw">method</span><span class="kw">=</span><span class="st">"ward.D2"</span>)
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">hierarchy</span>, <span class="kw">main</span> <span class="kw">=</span> <span class="st">"Hierarchical clustering on the input matrix of predictors"</span>)</pre></body></html></div>
 <p><img src="singleData_files/figure-html/hierarchy-1.png" width="672"></p>
 </div>
 <div id="variable-selection-along-the-hierarchy" class="section level3">
 <h3 class="hasAnchor">
 <a href="#variable-selection-along-the-hierarchy" class="anchor"></a>Variable selection along the hierarchy</h3>
 <p>SIComORe also includes three alternative methods of selection for prediction of phenotype with grouped correlated structure, on top of the one defined in <span class="citation">Ambroise et al. (<a href="#ref-sicomore">2018</a>)</span>. MLGL (see <span class="citation">Grimonprez (<a href="#ref-grimonprez_PhD">2016</a>)</span>, <span class="citation">Grimonprez et al. (<a href="#ref-mlgl">2019</a>)</span>) and the variant <span class="math inline">\(\rho\)</span>-SIComORe in the spirit of <span class="citation">Park, Hastie, and Tibshirani (<a href="#ref-park">2007</a>)</span>. We try the 3 available options for simultaneously finding and selecting the groups of variables related to the phenotype:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">out_rho      &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(X, y, hierarchy, <span class="dt">choice=</span><span class="st">"lambda.1se"</span>, <span class="dt">selection=</span><span class="st">"rho-sicomore"</span>, <span class="dt">mc.cores=</span><span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2">out_mlgl     &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(X, y, hierarchy, <span class="dt">choice=</span><span class="st">"lambda.1se"</span>, <span class="dt">selection=</span><span class="st">"mlgl"</span>        , <span class="dt">mc.cores=</span><span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb10-3" data-line-number="3">out_sicomore &lt;-<span class="st"> </span><span class="kw"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(X, y, hierarchy, <span class="dt">choice=</span><span class="st">"lambda.1se"</span>, <span class="dt">selection=</span><span class="st">"sicomore"</span>    , <span class="dt">mc.cores=</span><span class="ot">NULL</span>)</a>
-<a class="sourceLine" id="cb10-4" data-line-number="4">all_res &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(</a>
-<a class="sourceLine" id="cb10-5" data-line-number="5">  <span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(out_rho<span class="op">$</span>cv.error     , <span class="dt">method=</span><span class="st">"rho-sicomore"</span>),</a>
-<a class="sourceLine" id="cb10-6" data-line-number="6">  <span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(out_sicomore<span class="op">$</span>cv.error, <span class="dt">method=</span><span class="st">"sicomore"</span>),</a>
-<a class="sourceLine" id="cb10-7" data-line-number="7">  <span class="kw"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(out_mlgl<span class="op">$</span>cv.error    , <span class="dt">method=</span><span class="st">"mlgl"</span>)</a>
-<a class="sourceLine" id="cb10-8" data-line-number="8">  )</a></code></pre></div>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">out_rho</span>      <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"rho-sicomore"</span>, <span class="kw">mc.cores</span><span class="kw">=</span><span class="kw">NULL</span>)
+<span class="no">out_mlgl</span>     <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"mlgl"</span>        , <span class="kw">mc.cores</span><span class="kw">=</span><span class="kw">NULL</span>)
+<span class="no">out_sicomore</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"sicomore"</span>    , <span class="kw">mc.cores</span><span class="kw">=</span><span class="kw">NULL</span>)
+<span class="no">all_res</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(
+  <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="no">out_rho</span>$<span class="no">cv.error</span>     , <span class="kw">method</span><span class="kw">=</span><span class="st">"rho-sicomore"</span>),
+  <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="no">out_sicomore</span>$<span class="no">cv.error</span>, <span class="kw">method</span><span class="kw">=</span><span class="st">"sicomore"</span>),
+  <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="no">out_mlgl</span>$<span class="no">cv.error</span>    , <span class="kw">method</span><span class="kw">=</span><span class="st">"mlgl"</span>)
+  )</pre></body></html></div>
 <p>The three models show comparable estimated prediction error on the best level of the hierarchy:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">ggplot</span>(all_res) <span class="op">+</span><span class="st"> </span><span class="kw">aes</span>(<span class="dt">x =</span> lambda, <span class="dt">y =</span> mean, <span class="dt">colour =</span> method, <span class="dt">group =</span> method) <span class="op">+</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span><span class="kw">geom_smooth</span>(<span class="kw">aes</span>(<span class="dt">ymin =</span> mean <span class="op">-</span><span class="st"> </span>sd, <span class="dt">ymax =</span> mean <span class="op">+</span><span class="st"> </span>sd), <span class="dt">stat=</span><span class="st">"identity"</span>) <span class="op">+</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y =</span> <span class="st">"Mean cross-validation error"</span>, <span class="dt">x =</span> <span class="st">"Lambda"</span>) <span class="op">+</span><span class="st"> </span><span class="kw">coord_trans</span>(<span class="dt">x =</span> <span class="st">"log"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu">ggplot</span>(<span class="no">all_res</span>) + <span class="fu">aes</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">lambda</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">mean</span>, <span class="kw">colour</span> <span class="kw">=</span> <span class="no">method</span>, <span class="kw">group</span> <span class="kw">=</span> <span class="no">method</span>) +
+  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="kw">ymin</span> <span class="kw">=</span> <span class="no">mean</span> - <span class="no">sd</span>, <span class="kw">ymax</span> <span class="kw">=</span> <span class="no">mean</span> + <span class="no">sd</span>), <span class="kw">stat</span><span class="kw">=</span><span class="st">"identity"</span>) +
+  <span class="fu">labs</span>(<span class="kw">y</span> <span class="kw">=</span> <span class="st">"Mean cross-validation error"</span>, <span class="kw">x</span> <span class="kw">=</span> <span class="st">"Lambda"</span>) + <span class="fu">coord_trans</span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"log"</span>)</pre></body></html></div>
 <p><img src="singleData_files/figure-html/plot%20res-1.png" width="672"></p>
 <p>The group selected can be reached with the <code>getGrp()</code> methods. For instance,</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">out_rho<span class="op">$</span><span class="kw">getGrp</span>()</a></code></pre></div>
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">out_rho</span>$<span class="fu">getGrp</span>()</pre></body></html></div>
 <pre><code>## [[1]]
 ##  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
 ## [26] 26 27 28 29 30
@@ -228,11 +228,11 @@
 <div id="comparison-of-the-computation-times-between-the-3-options" class="section level2">
 <h2 class="hasAnchor">
 <a href="#comparison-of-the-computation-times-between-the-3-options" class="anchor"></a>Comparison of the computation times between the 3 options</h2>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">RHO      &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="kw"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(X, y, hierarchy, <span class="dt">choice=</span><span class="st">"lambda.1se"</span>, <span class="dt">selection=</span><span class="st">"rho-sicomore"</span>, <span class="dt">mc.cores=</span><span class="ot">NULL</span>))</a>
-<a class="sourceLine" id="cb14-2" data-line-number="2">SICOMORE &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="kw"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(X, y, hierarchy, <span class="dt">choice=</span><span class="st">"lambda.1se"</span>, <span class="dt">selection=</span><span class="st">"sicomore"</span>    , <span class="dt">mc.cores=</span><span class="ot">NULL</span>))</a>
-<a class="sourceLine" id="cb14-3" data-line-number="3">MLGL     &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="kw"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(X, y, hierarchy, <span class="dt">choice=</span><span class="st">"lambda.1se"</span>, <span class="dt">selection=</span><span class="st">"mlgl"</span>        , <span class="dt">mc.cores=</span><span class="ot">NULL</span>))</a>
-<a class="sourceLine" id="cb14-4" data-line-number="4">bench    &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html">microbenchmark</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/eval.html">eval</a></span>(RHO), <span class="kw"><a href="https://rdrr.io/r/base/eval.html">eval</a></span>(SICOMORE) , <span class="kw"><a href="https://rdrr.io/r/base/eval.html">eval</a></span>(MLGL), <span class="dt">times =</span> <span class="dv">4</span>)</a></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw">autoplot</span>(bench)</a></code></pre></div>
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">RHO</span>      <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"rho-sicomore"</span>, <span class="kw">mc.cores</span><span class="kw">=</span><span class="kw">NULL</span>))
+<span class="no">SICOMORE</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"sicomore"</span>    , <span class="kw">mc.cores</span><span class="kw">=</span><span class="kw">NULL</span>))
+<span class="no">MLGL</span>     <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"mlgl"</span>        , <span class="kw">mc.cores</span><span class="kw">=</span><span class="kw">NULL</span>))
+<span class="no">bench</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html">microbenchmark</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/eval.html">eval</a></span>(<span class="no">RHO</span>), <span class="fu"><a href="https://rdrr.io/r/base/eval.html">eval</a></span>(<span class="no">SICOMORE</span>) , <span class="fu"><a href="https://rdrr.io/r/base/eval.html">eval</a></span>(<span class="no">MLGL</span>), <span class="kw">times</span> <span class="kw">=</span> <span class="fl">4</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu">autoplot</span>(<span class="no">bench</span>)</pre></body></html></div>
 <p><img src="singleData_files/figure-html/unnamed-chunk-2-1.png" width="672"></p>
 </div>
 <div id="references" class="section level2 unnumbered">
@@ -255,21 +255,11 @@
 </div>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <div id="tocnav">
-      <h2 class="hasAnchor">
-<a href="#tocnav" class="anchor"></a>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-<li><a href="#requirements">Requirements</a></li>
-      <li><a href="#statistical-model">Statistical Model</a></li>
-      <li><a href="#data-generation">Data generation</a></li>
-      <li><a href="#adjusting-a-single-hierarchy">Adjusting a single hierarchy</a></li>
-      <li><a href="#comparison-of-the-computation-times-between-the-3-options">Comparison of the computation times between the 3 options</a></li>
-      <li><a href="#references">References</a></li>
-      </ul>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
 </div>
-      </div>
 
 </div>
 
@@ -280,7 +270,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.0.</p>
 </div>
 
       </footer>
