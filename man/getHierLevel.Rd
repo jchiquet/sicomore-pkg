@@ -11,7 +11,6 @@ getHierLevel(
   selection = c("rho-sicomore", "sicomore", "mlgl"),
   compression = "mean",
   depth.cut = 3,
-  grp.min = NULL,
   choice = c("lambda.min", "lambda.1se"),
   mc.cores = NULL,
   stab = FALSE,
@@ -33,8 +32,6 @@ getHierLevel(
 This argument allows to increase the speed of the algorithm by restraining the search space without affecting too much the performance.
 A value between 3 and 6 is recommended, the smaller the faster.}
 
-\item{grp.min}{Minimum number of groups to consider for a given level. Correspond to the highest allowed cut in the hierarchy.}
-
 \item{choice}{a string (either "lambda.min" or "lambda.1se"). Indicates how the tuning parameter is chosen in the penalized regression approach}
 
 \item{mc.cores}{an integer for the number of cores to use in the parallelization of the cross-validation and some other functions. Default is 1.}
@@ -43,8 +40,6 @@ A value between 3 and 6 is recommended, the smaller the faster.}
 
 \item{stab.param}{A list of parameter for the stabsel function if stab = TRUE.
 The parameters to choose are the FWER (1 by default), cut-off (0.75 by default) and bootstrap number (200 by default).}
-
-\item{cut.levels}{a numeric vector, the level consider in the hierarchy. By default a sequence of 100 levels is used.}
 }
 \value{
 an RC object with class 'sicomore-model', with methods \code{nGrp()}, \code{nVar()}, \code{getGrp()}, \code{getVar()}, \code{getCV()}, \code{getX.comp()}, \code{getCoef()} and with the following fields:
@@ -55,6 +50,7 @@ an RC object with class 'sicomore-model', with methods \code{nGrp()}, \code{nVar
  \item{cv.error:}{for the best grouping, a data frame showing the cross-validation error used in the variable selection procedure if stab=FALSE}
  \item{selection:}{the selection method used}
  \item{compression:}{the compression method used}
+ \item{group_inference:}{the group selection infered by "lasso" or "hclust" if no selection by lasso.}
 }
 }
 \description{

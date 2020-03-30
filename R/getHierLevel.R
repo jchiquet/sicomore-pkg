@@ -16,8 +16,6 @@
 #' @param stab A boolean indicating if the algorithm perform a lasso stability selection using stabsel function from stabs package.
 #' @param stab.param A list of parameter for the stabsel function if stab = TRUE.
 #' The parameters to choose are the FWER (1 by default), cut-off (0.75 by default) and bootstrap number (200 by default).
-#' @param grp.min Minimum number of groups to consider for the highest level in the hierarchy.
-#' Correspond to the highest allowed cut in the hierarchy. If NA, no restriction is given.
 #' @param mc.cores an integer for the number of cores to use in the parallelization of the cross-validation and some other functions. Default is 1.
 #'
 #' @details The methods for variable selection are variants of the LASSO or the group-LASSO designed to perform selection of interaction between multiple hierarchies:
@@ -47,7 +45,6 @@ getHierLevel <- function(X,
                          selection = c("rho-sicomore", "sicomore", "mlgl"),
                          compression = "mean",
                          depth.cut = 3,
-                         grp.min = NA,
                          choice=c("lambda.min", "lambda.1se"),
                          mc.cores=NULL,
                          stab = FALSE,
@@ -77,7 +74,7 @@ getHierLevel <- function(X,
     out <- .MLGL(X, y, hc.object, choice)
   else
     out <- .sicomore(X, y, weights, hc.object, compression, choice, depth.cut,
-                     mc.cores, stab, stab.param, grp.min)
+                     mc.cores, stab, stab.param)
 
   ## _________________________________________________________________
   ##
@@ -117,34 +114,33 @@ getHierLevel <- function(X,
 ## explore the hierarchy to find the best level of compression (cut.levels are the best)
 ## The bottom of the hiearchy is discarded.... (too many variables :( )
 .sicomore <- function(X, y, weights, hc.object, compression, choice, depth.cut,
-                      mc.cores, stab, stab.param, grp.min) {
+                      mc.cores, stab, stab.param) {
 
   cut.levels <- order(rev(c(max(weights),weights))) + 1
   cut.levels <- cut.levels[cumsum(cut.levels) <= depth.cut*ncol(X)]
-  n.grp.levels <- sapply(cut.levels, function(k) length(unique(cutree(hc.object, k = k))))
-  if (!is.na(grp.min) & any(n.grp.levels <= grp.min)) cut.levels[-which(n.grp.levels <= grp.min)] ## Remove out high levels in the hierarchy
   weights <- c(0,rev(weights),0) # Reorder the weight to have a correspondance with cut.levels
 
   ## Build a data frame with all compressed variables from interesting cut levels
   hierarchy <- lapply(apply(cutree(hc.object, k = cut.levels), 2, list), unlist, recursive=FALSE)
 
   # Xcomp[,j] is a compressed variables and Xcomp.variables[[j]] is the corresponding vector of variables
-  Xcomp.variables <- unlist(lapply(hierarchy,function(group) {
+  Xcomp.variables <- unlist(parallel::mclapply(hierarchy,function(group) {
     lapply(1:max(group), function(k){which(group==k)})
-    }), recursive=FALSE)
+    }, mc.cores = mc.cores), recursive=FALSE)
   uniqueIndex <- !duplicated(Xcomp.variables)
   Xcomp.variables <- Xcomp.variables[uniqueIndex] # Eliminate the group which are present at different level of the hierarchy
+
   Xcomp <- do.call(cbind,lapply(Xcomp.variables, function(variables) {
     computeCompressedDataFrameFromVariables(X, variables, compression)
-    }))
+  }))
 
   ## Adjusting the model
   penalty.factor <- rep(weights[cut.levels],cut.levels)[uniqueIndex]
 
   if (stab == TRUE){
     stab.lasso <- stabs::stabsel(x = Xcomp, y = y, B = stab.param$B,
-                          cutoff = stab.param$cutoff, PFER = stab.param$PFER,
-                          fitfun = stabs::glmnet.lasso,
+                          cutoff = stab.param$cutoff,
+                          fitfun = stabs::glmnet.lasso, PFER = stab.param$PFER,
                           args.fitfun = list(penalty.factor = penalty.factor),
                           mc.cores = mc.cores, sampling.type = "MB")
     selected.groups <- as.numeric(stab.lasso$selected)

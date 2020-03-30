@@ -13,7 +13,6 @@ sicomore(
   choice = c("lambda.min", "lambda.min"),
   method.clus = c("ward.D2", "ward.D2"),
   depth.cut = c(3, 3),
-  grp.min = NULL,
   mc.cores = 1,
   taxonomy = NULL,
   verbose = TRUE,
@@ -41,9 +40,6 @@ It is also possible to specify no hierarchy with "noclust".}
 This argument allows to increase the speed of the algorithm by restraining the search space without affecting too much the performance.
 A value between 3 and 6 is recommended, the smaller the faster.}
 
-\item{grp.min}{an interger for the minimum number of groups to consider for a given level. Correspond to the highest allowed cut in the hierarchy.
-If NULL, no restriction is given.}
-
 \item{mc.cores}{an integer for the number of cores to use in the parallelization of the cross-validation and some other functions. Default is 1.}
 
 \item{taxonomy}{a hierarchical tree object constructed using taxonomical unit.
@@ -56,8 +52,6 @@ Recommended for those who want to detect genomic-metagenomic interactions.}
 
 \item{stab.param}{A list of parameter for the stabsel function if stab = TRUE.
 The parameters to choose are the FWER (1 by default), cut-off (0.75 by default) and bootstrap number (200 by default).}
-
-\item{cuts}{a list of numeric vector defining the cut levels to be considered for each hierarchy. By default a sequence of 100 levels is used.}
 }
 \value{
 an RC object with class \code{sicomore} with methods \code{plot()}, \code{getSignificance()} and the following fields
