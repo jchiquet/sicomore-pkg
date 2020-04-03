@@ -7,15 +7,14 @@
 getHierLevel(
   X,
   y,
-  hierarchy,
+  hc.object,
   selection = c("rho-sicomore", "sicomore", "mlgl"),
   compression = "mean",
   depth.cut = 3,
-  cut.levels = unique(round(10^seq(log10(ncol(X)), log10(2), len = 100))),
   choice = c("lambda.min", "lambda.1se"),
   mc.cores = NULL,
   stab = FALSE,
-  stab.param = NULL
+  stab.param = list(B = c(100, 100), cutoff = c(0.75, 0.75), PFER = c(1, 1))
 )
 }
 \arguments{
@@ -23,7 +22,7 @@ getHierLevel(
 
 \item{y}{response variable}
 
-\item{hierarchy}{output of a hierarchical clustering algorithm in the \code{hclust} format (must be an "hclust" object)}
+\item{hc.object}{output of a hierarchical clustering algorithm in the \code{hclust} format (must be an "hclust" object)}
 
 \item{selection}{method used to perform variable selection. Either 'sicomore', 'rho-sicomore'  or 'mlgl' (see details). Default is 'rho-sicomore'.}
 
@@ -33,25 +32,25 @@ getHierLevel(
 This argument allows to increase the speed of the algorithm by restraining the search space without affecting too much the performance.
 A value between 3 and 6 is recommended, the smaller the faster.}
 
-\item{cut.levels}{a numeric vector, the level consider in the hierarchy. By default a sequence of 100 levels is used.}
-
 \item{choice}{a string (either "lambda.min" or "lambda.1se"). Indicates how the tuning parameter is chosen in the penalized regression approach}
 
 \item{mc.cores}{an integer for the number of cores to use in the parallelization of the cross-validation and some other functions. Default is 1.}
 
-\item{stab}{not yet documented}
+\item{stab}{A boolean indicating if the algorithm perform a lasso stability selection using stabsel function from stabs package.}
 
-\item{stab.param}{not yet documented}
+\item{stab.param}{A list of parameter for the stabsel function if stab = TRUE.
+The parameters to choose are the FWER (1 by default), cut-off (0.75 by default) and bootstrap number (200 by default).}
 }
 \value{
 an RC object with class 'sicomore-model', with methods \code{nGrp()}, \code{nVar()}, \code{getGrp()}, \code{getVar()}, \code{getCV()}, \code{getX.comp()}, \code{getCoef()} and with the following fields:
 \itemize{
  \item{groups:}{a list with the selected groups of predictors}
- \item{coefficients:}{a vector with the estimated coefficients (one per selected group)}
+ \item{coefficients:}{a vector with the estimated coefficients (one per selected group) if stab=FALSE}
  \item{X.comp:}{The compressed version of the original input matrix (as many columns as number of selected groups)}
- \item{cv.error:}{for the best grouping, a data frame showing the cross-validation error used in the variable selection procedure}
+ \item{cv.error:}{for the best grouping, a data frame showing the cross-validation error used in the variable selection procedure if stab=FALSE}
  \item{selection:}{the selection method used}
  \item{compression:}{the compression method used}
+ \item{group_inference:}{the group selection infered by "lasso" or "hclust" if no selection by lasso.}
 }
 }
 \description{

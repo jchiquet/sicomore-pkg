@@ -10,8 +10,6 @@ sicomore(
   X.list,
   compressions = rep("mean", length(X.list)),
   selection = c("rho-sicomore", "sicomore", "mlgl"),
-  cuts = lapply(X.list, function(X) unique(round(10^seq(log10(ncol(X)), log10(2), len =
-    100)))),
   choice = c("lambda.min", "lambda.min"),
   method.clus = c("ward.D2", "ward.D2"),
   depth.cut = c(3, 3),
@@ -30,8 +28,6 @@ sicomore(
 \item{compressions}{a vector of string for the compression methods for each data sets. Default used the mean to compressed predictors in the same group.}
 
 \item{selection}{method used to perform variable selection. Either 'sicomore', 'mlgl' or 'rho-sicomore' (see details). Default is 'sicomore'.}
-
-\item{cuts}{a list of numeric vector defining the cut levels to be considered for each hierarchy. By default a sequence of 100 levels is used.}
 
 \item{choice}{a string (either "lambda.min" or "lambda.1se"). Indicates how the tuning parameter is chosen in the penalized regression approach.}
 
@@ -52,9 +48,10 @@ Recommended for those who want to detect genomic-metagenomic interactions.}
 
 \item{verbose}{not yet documented}
 
-\item{stab}{not yet documented}
+\item{stab}{A boolean indicating if the algorithm perform a lasso stability selection using stabsel function from stabs package.}
 
-\item{stab.param}{not yet documented}
+\item{stab.param}{A list of parameter for the stabsel function if stab = TRUE.
+The parameters to choose are the FWER (1 by default), cut-off (0.75 by default) and bootstrap number (200 by default).}
 }
 \value{
 an RC object with class \code{sicomore} with methods \code{plot()}, \code{getSignificance()} and the following fields

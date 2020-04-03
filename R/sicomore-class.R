@@ -11,7 +11,8 @@ sicomore.model <-
           cv.error     = "data.frame",
           X.comp       = "matrix",
           compression  = "character",
-          selection    = "character"
+          selection    = "character",
+          group_inference = "character"
         ),
               methods = list(
                 nGrp      = function() return(length(groups)),
