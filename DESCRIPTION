@@ -1,6 +1,6 @@
 Package: sicomore
 Title: Selection of Interaction effects in COmpressed Multiple Omics REpresentation
-Version: 0.2.1-9000
+Version: 0.2.2-9000
 Authors@R: c(
     person("Christophe", "Ambroise", role = "aut", email = "christophe.ambroise@genopole.cnrs.fr"),
     person("Julien", "Chiquet", role = c("aut", "cre"), email = "julien.chiquet@inrae.fr",
@@ -39,6 +39,7 @@ Suggests:
   rmarkdown,
   tidyverse,
   reshape2,
+  repmis,
   corrplot,
   cowplot,
   mvtnorm,

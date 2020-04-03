@@ -17,7 +17,9 @@ navbar:
       menu:
       - text: "Analysis of a single data set"
         href: articles/singleData.html
-      - text: "Analysis of two onteracting data sets"
+      - text: "Analysis of two interacting data sets"
+        href: articles/twoDataInteraction.html
+      - text: "Analysis of the MEtaRhizosphere data"
         href: articles/twoDataInteraction.html
     - text: "Changelog"
       href: news/index.html

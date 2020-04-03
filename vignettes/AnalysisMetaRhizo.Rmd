@@ -1,0 +1,218 @@
+---
+title: "Detection of metagenomic-genomic interactions in Medicago truncatula (MetaRhizo INRAE project)"
+author: "SICoMORe team (F. Guinot, J. Chiquet, M. Szafranski, C. Ambroise)"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+link-citations: yes
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{AnalysisMetaRhizo}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  screenshot.force = FALSE, 
+  echo = TRUE,
+  rows.print = 5,
+  message = FALSE, 
+  warning = FALSE)
+```
+
+##  Load database and libraries
+
+```{r requirements}
+library(sicomore)
+library(tidyverse)
+library(knitr)
+library(repmis)
+```
+
+```{r data}
+## Load database from github repository with repmis library
+githubURL <- "https://github.com/fguinot/MetaRhizo-database/blob/master/rData/PhenoGenoMeta.Rds?raw=true"
+repmis::source_data(githubURL)
+
+## We add a +1 to the SNP data to get values ranging from 1 to 3 as it is required by the particular clustering algorithm the sicomore fucntion use
+X2 <- PhenoGenoMeta$Genotype + 1
+
+## We remove the Undefined genera as it not biologically relevant for this analysis. The metagenomic data have been normalized for sequencing depth with TSS transformation.
+X1 <- PhenoGenoMeta$Metagenome
+X1 <- X1[,-which(colnames(X1) == "Undefined")]
+```
+
+## Material
+
+In order to study the interactions between *Medicago truncatula* and the microbial community of its rhizosphere, a core collection of 154 accessions have been analysed. The purpose of the study is to identify significant interactions between the plant genome and the microbial metagenome to better understand the effect of the microbial community on the growth of the plant.
+
+Each accession were grown in a controlled environment and phenotyped for several traits related to the growth and nutritional strategy:
+
+* Root Shoot Ratio (RTR)
+
+In addition to the phenotypic measurement, the rhizosphere of each accession were also analysed to determine the microbial diversity in terms of number of species and abundance of each species. A total of 848 different species, gathered in 330 genera, were found in the rhizosphere of the plants.
+
+Finally, 154 accession were genotyped with a DNA microarray chip for a total number of 6 372 968 SNPs. The missing values were imputed using the
+`snp.imputation` function from the `snpStats` R package. Given two set of SNPs typed in the same subjects, this function calculates rules which can be used to impute one set from the other in a subsequent sample. 
+
+Some SNPs having too many missing values to be imputed at 100%, we only kept the SNPs which have been completely imputed, thus reducing the size of the data to 2 148 505 SNPs. 
+
+## Method
+
+We focus on the detection of interactions between groups of metagenomic and genetic markers to better understand the complex relationship between environment and genome in the expression of a given phenotype. The
+proposed method first reduces the dimension of the search space by selecting a subset of
+super variables in both complementary data sets. The dimension reduction step combines
+hierarchical clustering, which denes super variables, and Lasso, which selects relevant
+super variables. Relevant interactions are then explored via linear model testing.
+
+Our algorithm, named SICOMORE for Selection of Interaction effects in COmpressed Multiple Omics REpresentation, can be summarized as follows:
+
+1. Reveal the underlying structure of the data with a hierarchical classification. 
+2. Compress the data with an aggregation function on each group.
+3. Identify the optimal number of compressed variables by adjusting a model of
+regression penalised (Lasso, Tibshirani [1994]) weighted with weights denoted by the
+hierarchical structure.
+4. Test the effects of interactions between each compressed variable selected by the Lasso in a multiple testing procedure.
+
+**Step 1: Clustering of the data.** In our algorithm, we use an agglomerative hierarchical clustering adapted to omic data [Dehman et al., 2015] in order to reveal the underlying structure but it is possible to use different methods of classication to identify this structure or to use a known structure.
+
+**Step 2: Efficient exploration of the hierarchical structure and compression of the data.** Whichever approach is chosen, a systematic exploration of the different levels of the hierarchy is essential to identify an optimal number of groups ([Milligan and Cooper, 1985] or [Gordon, 1999]). We propose a new strategy to bypass this computationaly expensive exploration:
+
+  a. Extend the entire hierarchical tree by considering all possible groups at all levels.
+  b. Assign a weight to each group according to the differences between two groups consecutives in the hierarchy.
+  c. Summarize each group into a new compressed variable.
+
+**Step 3: Selection of the compressed variables.** We assume that the interactions are strong which means that an interaction effect can only be present if the two associated main effects are also significant. A variable selection procedure is therefore used to discard the irrelevant main effects. Here the main effects are defined as the compressed variables constructed in step 2 (iii). We use a l1-penalized regression weighted by the weights defined in step 2 (ii) to select the relevant main effects combined with a stability selection procedure.
+
+**Step 4: Identification of interactions.** From a variable selection perspective, the relevant interactions can be identified by considering the interactions between each group selected in the genomic hierachy and each group selected in the metagenomic hierachy in a procedure of multiple tests. We may resort on a Benjamini-Hochberg (BH) correction for multiple testing in order to adjust the p-value in a less conservative way than the bonferroni correction.
+
+## Analysis
+
+The `sicomore()` function requires that we choose several hyper-parameters in order to run properly:
+
+* Aggregating function: For the metagenomic and genomic data we define the group average as the supervariable:  `compression=c("mean","mean")`
+
+* Clustering algorithm: For the metagenomic we use a hierarchical clustering using Ward's distance as the measure of similarity. For the genomic data, we used spatially constrained hierarchical clustering algorithm which integrates the linkage disequilibrium as the measure of dissimilarity [Dehman et al., 2015]. It is also possible not to specify any hierarchy for one the 2 datasets, in that case we are looking for interaction between groups of variables in one dataset and single variables in the second dataset: `method.clus = c("ward.D2","snpClust")` 
+
+* Search space: For computational reasons, it is possible to restrain the search space in the hierarchy with the `depth.cut` argument of the function, this argument allows to increase the speed of the algorithm by restraining the search space without affecting too much the performance. A value between 3 and 6 is recommended, the smaller the faster: `depth.cut = c(3,5)`. 
+
+* Stability selection: As the variable selection with Lasso algorithm can be unstable, we proposed to perform a stability selection procedure, using the `stabs` R package [Benjamin and Hothorn, 2017] with the argument `stab = TRUE`.  The stability parameters for the genomic data have been set to `B = 100` subsampling replicates with a selection frequency of `cutoff = 0.6` and a upper bound for the per-family error rate of `PFER = 1O`. For the metagenomic data, the stability parameters have been set to `B = 300` subsampling replicates with a selection frequency of `cutoff = 0.7` and a upper bound for the per-family error rate of `PFER = 1O`: `stab.param = list(B = c(300,100), PFER = c(1,1O), cutoff = c(.7, .6))`
+
+We also chose to divide the analysis chromosome by chromosome as running the algorithm on all the SNPs at the same time would require too much memory. We parallelize the process over 8 cores, one for each chromosome.
+
+```{r, eval=FALSE}
+set.seed(123456)
+sicomore_RTR<- parallel::mclapply(1:8, function(i){
+  sicomore(y = PhenoGenoMeta$Phenotype$RTR,
+           X.list = list(X1, 
+                         X2[,which(PhenoGenoMeta$CHR == i)]),
+           selection ="rho-sicomore",
+           choice = c("lambda.min","lambda.min"),
+           depth.cut = c(3,6),
+           method.clus = c("ward.D2","snpClust"),
+           compressions = c("mean","mean"),
+           stab = T,
+           stab.param = list(B = c(300,100), PFER = c(1,10), cutoff = c(.7, .6)))
+}, mc.cores = 8)
+```
+
+## Results
+
+As the algorithm is computationally heavy, we directly provide the results as an Rdata file hosted on the github repository.
+
+```{r output}
+githubURL <- "https://github.com/fguinot/MetaRhizo-database/blob/master/rData/sicomore_RTR.Rdata?raw=true"
+repmis::source_data(githubURL, rdata = T)
+```
+
+### Number of selected genomic groups
+
+We can look at the number and size of genomic groups selected on each chromosome by the stabilized lasso procedure.
+
+```{r}
+map_dfr(1:8, function(i){
+  data.frame(CHR = paste0("CHR",i),
+             Genomic_group = paste0("X2_comp",1:sicomore.RTR[[i]]$models[[2]]$nGrp()),
+             Group_size = paste(
+               sapply(1:sicomore.RTR[[i]]$models[[2]]$nGrp(),
+                                      function(grp) 
+                                        length(sicomore.RTR[[i]]$models[[2]]$groups[[grp]])),"SNPs")
+             )
+}) %>% 
+  kable
+```
+
+We can see that 2 or 3 groups of genomic variables of varying sizes are selected on each 8 chromosomes.
+
+### Number of selected metagenomic groups
+
+We can look at the number and size of metagenomic groups selected by the stabilized lasso procedure. As the group selection procedure of the metagenomic groups do not depend on the chromosome, we should get the same groups whatever the chromosome. 
+
+```{r}
+map_dfr(1:8, function(i){
+  data.frame(CHR = paste0("CHR",i),
+             Metagenomic_group = paste0("X1_comp",1:sicomore.RTR[[i]]$models[[1]]$nGrp()),
+             Group_size = paste(
+               sapply(1:sicomore.RTR[[i]]$models[[1]]$nGrp(),
+                                      function(grp) 
+                                        length(sicomore.RTR[[i]]$models[[1]]$groups[[grp]])),"genera")
+             )
+}) %>% 
+  kable
+```
+
+We can see that the same 3 stable groups of metagenomic variables are selected at each 8 chromosomic iterations showing the stability of the selection procedure.
+
+### Significant interaction (pval < 0.05)
+
+We know look at the interactions between the selected supervariblaes by extracting the p-value from the sicomore model. We only look at the interactions with a $p$-value < 0.05 before FDR-control correction.
+
+```{r}
+## get chromosome having interaction with p-value < 0.5
+mat.signif <- lapply(1:8, function(i) sicomore.RTR[[i]]$pval < .05)
+chr.signif <- which(unlist(lapply(mat.signif, function(mat) any(mat))))
+
+## Build results dataframe
+res.pval <- map_dfr(chr.signif, function(i){
+  x <- sicomore.RTR[[i]]
+  mat <- as.data.frame(x$pval < .05) 
+  SNP <- colnames(X2)[which(PhenoGenoMeta$CHR == i)]
+  
+  region <- sapply(which(apply(mat, 2, any)), 
+                       function(grp) {
+                         snp <- SNP[x$models[[2]]$groups[grp] %>% unlist]
+                         paste0(snp[1]," to ",snp[length(snp)], " (",length(snp)," snp)")
+                       })
+
+  meta.list <-  lapply(which(apply(mat, 1, any)), 
+                         function(grp)
+                           paste(length(unlist(x$models[[1]]$groups[grp])), "genera"))
+  
+  map_dfr(names(meta.list) , function(meta){
+    data.frame(CHR = paste0("CHR",i),
+               SNP_region = region[colnames(mat)[which(mat[meta,] %>% unlist)]] %>% unlist,
+               OTU_group = meta.list[meta] %>% unlist,
+               pvalue = x$pval[meta, which(mat[meta,] %>% unlist )],
+               qvalue = matrix(p.adjust(x$pval, method = "BH"), ncol = ncol(x$pval), dimnames = dimnames(x$pval))[meta, which(mat[meta,] %>% unlist)]
+    )
+  })
+})
+res.pval %>%
+  kable
+```
+
+### List of relevant genera
+
+We can also extract the 39 genera composing the group have been found in interaction with several genomic regions of the RTR phenotype.
+
+```{r}
+sicomore.RTR[[1]]$models[[1]]$groups[[2]] 
+```
+
+## Conclusion
+
+We can see that the sicomore algorithm was able to find 4 significant interactions (at the threshold of $0.05$ for the non-corrected p-value) from this complex and very larage genomic and metagenomic datasets. The q-value indicates that these interactions do not pass the FDR multiple testing correction but we can argue that it is because we are looking at very small effect. Biological interpretation of these interactions are nonetheless relevant to look at to check if these are not false positives.
+
+
