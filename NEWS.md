@@ -1,3 +1,7 @@
+# SIComORe 0.2.2-9000
+
+* Added the MetaRhizosphere vignette
+
 # SIComORe 0.2.1-9000
 
 * Updating vignettes
