@@ -172,4 +172,9 @@ bench    <- microbenchmark(eval(RHO), eval(SICOMORE) , eval(MLGL), times = 4)
 autoplot(bench)
 ```
 
+```{r, echo = FALSE, results='hide'}
+rm(list = ls())
+gc
+```
+
 ## References

@@ -31,7 +31,7 @@ library(knitr)
 library(repmis)
 ```
 
-```{r data}
+```{r data, eval = FALSE}
 ## Load database from github repository with repmis library
 githubURL <- "https://github.com/fguinot/MetaRhizo-database/blob/master/rData/PhenoGenoMeta.Rds?raw=true"
 repmis::source_data(githubURL)
@@ -178,13 +178,12 @@ chr.signif <- which(unlist(lapply(mat.signif, function(mat) any(mat))))
 res.pval <- map_dfr(chr.signif, function(i){
   x <- sicomore.RTR[[i]]
   mat <- as.data.frame(x$pval < .05) 
-  SNP <- colnames(X2)[which(PhenoGenoMeta$CHR == i)]
-  
-  region <- sapply(which(apply(mat, 2, any)), 
-                       function(grp) {
-                         snp <- SNP[x$models[[2]]$groups[grp] %>% unlist]
-                         paste0(snp[1]," to ",snp[length(snp)], " (",length(snp)," snp)")
-                       })
+  # SNP <- colnames(X2)[which(PhenoGenoMeta$CHR == i)]
+  # region <- sapply(which(apply(mat, 2, any)), 
+  #                      function(grp) {
+  #                        snp <- SNP[x$models[[2]]$groups[grp] %>% unlist]
+  #                        paste0(snp[1]," to ",snp[length(snp)], " (",length(snp)," snp)")
+  #                      })
 
   meta.list <-  lapply(which(apply(mat, 1, any)), 
                          function(grp)
@@ -192,7 +191,7 @@ res.pval <- map_dfr(chr.signif, function(i){
   
   map_dfr(names(meta.list) , function(meta){
     data.frame(CHR = paste0("CHR",i),
-               SNP_region = region[colnames(mat)[which(mat[meta,] %>% unlist)]] %>% unlist,
+               # SNP_region = region[colnames(mat)[which(mat[meta,] %>% unlist)]] %>% unlist,
                OTU_group = meta.list[meta] %>% unlist,
                pvalue = x$pval[meta, which(mat[meta,] %>% unlist )],
                qvalue = matrix(p.adjust(x$pval, method = "BH"), ncol = ncol(x$pval), dimnames = dimnames(x$pval))[meta, which(mat[meta,] %>% unlist)]
