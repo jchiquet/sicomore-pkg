@@ -19,11 +19,11 @@ navbar:
         href: articles/singleData.html
       - text: "Analysis of two interacting data sets"
         href: articles/twoDataInteraction.html
-      - text: "Analysis of the MEtaRhizosphere data"
-        href: articles/twoDataInteraction.html
+      - text: "Analysis of the MetaRhizosphere data"
+        href: articles/AnalysisMetaRhizo.html
     - text: "Changelog"
       href: news/index.html
   right:
     - icon: fa-github
-      href: https://github.com/fguinot/sicomore-pkg
+      href: https://github.com/jchiquet/sicomore-pkg
 
