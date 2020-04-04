@@ -74,7 +74,7 @@ The selection is performed by various penalty-based regression methods (weighted
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sicomore</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1-9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2-9000</span>
       </span>
     </div>
 
@@ -103,7 +103,10 @@ The selection is performed by various penalty-based regression methods (weighted
       <a href="../articles/singleData.html">Analysis of a single data set</a>
     </li>
     <li>
-      <a href="../articles/twoDataInteraction.html">Analysis of two onteracting data sets</a>
+      <a href="../articles/twoDataInteraction.html">Analysis of two interacting data sets</a>
+    </li>
+    <li>
+      <a href="../articles/twoDataInteraction.html">Analysis of the MEtaRhizosphere data</a>
     </li>
   </ul>
 </li>
@@ -149,9 +152,8 @@ The selection is performed by various penalty-based regression methods (weighted
   <span class='kw'>selection</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"rho-sicomore"</span>, <span class='st'>"sicomore"</span>, <span class='st'>"mlgl"</span>),
   <span class='kw'>compression</span> <span class='kw'>=</span> <span class='st'>"mean"</span>,
   <span class='kw'>depth.cut</span> <span class='kw'>=</span> <span class='fl'>3</span>,
-  <span class='kw'>grp.min</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>choice</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"lambda.min"</span>, <span class='st'>"lambda.1se"</span>),
-  <span class='kw'>mc.cores</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>mc.cores</span> <span class='kw'>=</span> <span class='fl'>2</span>,
   <span class='kw'>stab</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>stab.param</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>B</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>100</span>, <span class='fl'>100</span>), <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.75</span>, <span class='fl'>0.75</span>), <span class='kw'>PFER</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>))
 )</pre>
@@ -186,10 +188,6 @@ This argument allows to increase the speed of the algorithm by restraining the s
 A value between 3 and 6 is recommended, the smaller the faster.</p></td>
     </tr>
     <tr>
-      <th>grp.min</th>
-      <td><p>Minimum number of groups to consider for a given level. Correspond to the highest allowed cut in the hierarchy.</p></td>
-    </tr>
-    <tr>
       <th>choice</th>
       <td><p>a string (either "lambda.min" or "lambda.1se"). Indicates how the tuning parameter is chosen in the penalized regression approach</p></td>
     </tr>
@@ -206,10 +204,6 @@ A value between 3 and 6 is recommended, the smaller the faster.</p></td>
       <td><p>A list of parameter for the stabsel function if stab = TRUE.
 The parameters to choose are the FWER (1 by default), cut-off (0.75 by default) and bootstrap number (200 by default).</p></td>
     </tr>
-    <tr>
-      <th>cut.levels</th>
-      <td><p>a numeric vector, the level consider in the hierarchy. By default a sequence of 100 levels is used.</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -221,6 +215,7 @@ The parameters to choose are the FWER (1 by default), cut-off (0.75 by default) 
 <li><p>cv.error:for the best grouping, a data frame showing the cross-validation error used in the variable selection procedure if stab=FALSE</p></li>
 <li><p>selection:the selection method used</p></li>
 <li><p>compression:the compression method used</p></li>
+<li><p>group_inference:the group selection infered by "lasso" or "hclust" if no selection by lasso.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>

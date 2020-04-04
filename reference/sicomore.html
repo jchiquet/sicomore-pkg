@@ -73,7 +73,7 @@ Selection of Interaction effects in COmpressed  Multiple Omics REpresentation" /
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sicomore</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1-9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2-9000</span>
       </span>
     </div>
 
@@ -102,7 +102,10 @@ Selection of Interaction effects in COmpressed  Multiple Omics REpresentation" /
       <a href="../articles/singleData.html">Analysis of a single data set</a>
     </li>
     <li>
-      <a href="../articles/twoDataInteraction.html">Analysis of two onteracting data sets</a>
+      <a href="../articles/twoDataInteraction.html">Analysis of two interacting data sets</a>
+    </li>
+    <li>
+      <a href="../articles/twoDataInteraction.html">Analysis of the MEtaRhizosphere data</a>
     </li>
   </ul>
 </li>
@@ -148,7 +151,6 @@ Selection of Interaction effects in COmpressed  Multiple Omics REpresentation" /
   <span class='kw'>choice</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"lambda.min"</span>, <span class='st'>"lambda.min"</span>),
   <span class='kw'>method.clus</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ward.D2"</span>, <span class='st'>"ward.D2"</span>),
   <span class='kw'>depth.cut</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>3</span>),
-  <span class='kw'>grp.min</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>mc.cores</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>taxonomy</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
@@ -194,11 +196,6 @@ This argument allows to increase the speed of the algorithm by restraining the s
 A value between 3 and 6 is recommended, the smaller the faster.</p></td>
     </tr>
     <tr>
-      <th>grp.min</th>
-      <td><p>an interger for the minimum number of groups to consider for a given level. Correspond to the highest allowed cut in the hierarchy.
-If NULL, no restriction is given.</p></td>
-    </tr>
-    <tr>
       <th>mc.cores</th>
       <td><p>an integer for the number of cores to use in the parallelization of the cross-validation and some other functions. Default is 1.</p></td>
     </tr>
@@ -220,10 +217,6 @@ Recommended for those who want to detect genomic-metagenomic interactions.</p></
       <th>stab.param</th>
       <td><p>A list of parameter for the stabsel function if stab = TRUE.
 The parameters to choose are the FWER (1 by default), cut-off (0.75 by default) and bootstrap number (200 by default).</p></td>
-    </tr>
-    <tr>
-      <th>cuts</th>
-      <td><p>a list of numeric vector defining the cut levels to be considered for each hierarchy. By default a sequence of 100 levels is used.</p></td>
     </tr>
     </table>
 

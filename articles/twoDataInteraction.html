@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sicomore</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1-9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2-9000</span>
       </span>
     </div>
 
@@ -60,7 +60,10 @@
       <a href="../articles/singleData.html">Analysis of a single data set</a>
     </li>
     <li>
-      <a href="../articles/twoDataInteraction.html">Analysis of two onteracting data sets</a>
+      <a href="../articles/twoDataInteraction.html">Analysis of two interacting data sets</a>
+    </li>
+    <li>
+      <a href="../articles/twoDataInteraction.html">Analysis of the MEtaRhizosphere data</a>
     </li>
   </ul>
 </li>
@@ -92,7 +95,7 @@
             <h3 class="subtitle">Detect relevant interactions between structured data</h3>
                         <h4 class="author">SICoMORe team</h4>
             
-            <h4 class="date">2020-03-26</h4>
+            <h4 class="date">2020-04-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jchiquet/sicomore-pkg/blob/master/vignettes/twoDataInteraction.Rmd"><code>vignettes/twoDataInteraction.Rmd</code></a></small>
       <div class="hidden name"><code>twoDataInteraction.Rmd</code></div>
@@ -115,6 +118,8 @@
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">Matrix</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">reshape2</span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">cowplot</span>)</pre></body></html></div>
+<p>We also fix the number of cores to a predefined value<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">nb_cores</span> <span class="kw">&lt;-</span> <span class="fl">2</span></pre></body></html></div>
 </div>
 <div id="statistical-model" class="section level2">
 <h2 class="hasAnchor">
@@ -148,9 +153,9 @@
 <a href="#group-structured-matrices-of-predictors" class="anchor"></a>Group-structured Matrices of predictors</h3>
 <p>Data generation goes pretty much just like in the example on an single data set (see <a href="singleData.html">the corresponding vignette</a> for details), but here two data sets are required.</p>
 <p>These two data sets share a common sample size:</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">n</span> <span class="kw">&lt;-</span> <span class="fl">100</span></pre></body></html></div>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">n</span> <span class="kw">&lt;-</span> <span class="fl">100</span></pre></body></html></div>
 <p>The first data set is composed by 50 variables spread into 5 groups approximately balanced:</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">p1</span> <span class="kw">&lt;-</span> <span class="fl">50</span> <span class="co"># number of variables </span>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">p1</span> <span class="kw">&lt;-</span> <span class="fl">50</span> <span class="co"># number of variables </span>
 <span class="no">K1</span> <span class="kw">&lt;-</span> <span class="fl">5</span>  <span class="co"># number of groups</span>
 <span class="no">grp1_size</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Multinom.html">rmultinom</a></span>(<span class="fl">1</span>,<span class="no">p1</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="no">p1</span>/<span class="no">K1</span>,<span class="no">K1</span>)) <span class="co">## group sizes</span>
 <span class="no">Sigma1</span> <span class="kw">&lt;-</span>
@@ -159,7 +164,7 @@
 <span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span>(<span class="no">Sigma1</span>) <span class="kw">&lt;-</span> <span class="fl">1</span>
 <span class="no">X1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mvtnorm/man/Mvnorm.html">rmvnorm</a></span>(<span class="no">n</span>, <span class="kw">sigma</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span>(<span class="no">Sigma1</span>))</pre></body></html></div>
 <p>The second data set is composed by 40 variables spread into 10 groups approximately balanced:</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">p2</span> <span class="kw">&lt;-</span> <span class="fl">40</span>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">p2</span> <span class="kw">&lt;-</span> <span class="fl">40</span>
 <span class="no">K2</span> <span class="kw">&lt;-</span> <span class="fl">10</span>
 <span class="no">grp2_size</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Multinom.html">rmultinom</a></span>(<span class="fl">1</span>,<span class="no">p2</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="no">p2</span>/<span class="no">K2</span>,<span class="no">K2</span>)) <span class="co">## group sizes</span>
 <span class="no">Sigma2</span> <span class="kw">&lt;-</span>
@@ -168,7 +173,7 @@
 <span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span>(<span class="no">Sigma2</span>) <span class="kw">&lt;-</span> <span class="fl">1</span>
 <span class="no">X2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mvtnorm/man/Mvnorm.html">rmvnorm</a></span>(<span class="no">n</span>, <span class="kw">sigma</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span>(<span class="no">Sigma2</span>))</pre></body></html></div>
 <p>The matrices of empirical correlations of <span class="math inline">\(\mathbf{X}^{(1)}\)</span> and <span class="math inline">\(\mathbf{X}^{(2)}\)</span> exhibit the block structures of each data set:</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">mfrow</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>))
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">mfrow</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>))
 <span class="fu"><a href="https://rdrr.io/pkg/corrplot/man/corrplot.html">corrplot</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span>(<span class="no">X1</span>), <span class="kw">method</span> <span class="kw">=</span> <span class="st">"color"</span>, <span class="kw">tl.pos</span> <span class="kw">=</span> <span class="st">"n"</span>)
 <span class="fu"><a href="https://rdrr.io/pkg/corrplot/man/corrplot.html">corrplot</a></span>(<span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span>(<span class="no">X2</span>), <span class="kw">method</span> <span class="kw">=</span> <span class="st">"color"</span>, <span class="kw">tl.pos</span> <span class="kw">=</span> <span class="st">"n"</span>)</pre></body></html></div>
 <p><img src="twoDataInteraction_files/figure-html/covariance%20matrices-1.png" width="768"></p>
@@ -177,26 +182,26 @@
 <h3 class="hasAnchor">
 <a href="#phenotyperesponse-vector" class="anchor"></a>Phenotype/Response vector</h3>
 <p>The phenotype is a linear combinaison of the <em>compressed</em> version of the predictors. Here, we use the mean to compressed a group of variables:</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">grp1_ind</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>:<span class="no">K1</span>, <span class="no">grp1_size</span>) <span class="co"># vector of group indices</span>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">grp1_ind</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>:<span class="no">K1</span>, <span class="no">grp1_size</span>) <span class="co"># vector of group indices</span>
 <span class="no">grp2_ind</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>:<span class="no">K2</span>, <span class="no">grp2_size</span>) <span class="co"># vector of group indices</span>
 <span class="no">main_effects_1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rowsum.html">rowsum</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="no">X1</span>), <span class="no">grp1_ind</span>)/<span class="fu"><a href="https://rdrr.io/r/base/tabulate.html">tabulate</a></span>(<span class="no">grp1_ind</span>))
 <span class="no">main_effects_2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/rowsum.html">rowsum</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="no">X2</span>), <span class="no">grp2_ind</span>)/<span class="fu"><a href="https://rdrr.io/r/base/tabulate.html">tabulate</a></span>(<span class="no">grp2_ind</span>))</pre></body></html></div>
 <p>This time we also need the matrix of data interactions, with size <span class="math inline">\(n \times (K^{(1)} \times K^{(2)})\)</span>.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">interactions</span> <span class="kw">&lt;-</span>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">interactions</span> <span class="kw">&lt;-</span>
   <span class="fu">map</span>(<span class="fl">1</span>:<span class="no">K2</span>, ~ <span class="fu"><a href="https://rdrr.io/r/base/sweep.html">sweep</a></span>(<span class="no">main_effects_1</span>, <span class="fl">1</span>, <span class="no">main_effects_2</span>[, <span class="no">.x</span>], <span class="st">"*"</span>)) <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="no">cbind</span>, <span class="no">.</span>)</pre></body></html></div>
 <p>The parameters <span class="math inline">\(\boldsymbol\beta^{(1)}, \boldsymbol\beta^{(2)}\)</span> and <span class="math inline">\(\boldsymbol\beta\)</span> in the linear model originating the response variable are chosen such that there is <span class="math inline">\(s=2\)</span> non-null interactions in the matrix <span class="math inline">\(\beta\)</span>:</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">s</span> <span class="kw">&lt;-</span> <span class="fl">2</span> <span class="co"># number of non-null interactions</span>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">s</span> <span class="kw">&lt;-</span> <span class="fl">2</span> <span class="co"># number of non-null interactions</span>
 <span class="no">theta</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/Matrix.html">Matrix</a></span>(<span class="fl">0</span>, <span class="no">K1</span>, <span class="no">K2</span>)
 <span class="no">theta</span>[<span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="fl">1</span>:(<span class="no">K1</span> * <span class="no">K2</span>), <span class="no">s</span>)] <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="no">s</span>, <span class="fl">2</span>, <span class="fl">4</span>)</pre></body></html></div>
 <p>The main effects associated with these interactions are drawn different from zero:</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">beta1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0</span>, <span class="no">K1</span>)
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">beta1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0</span>, <span class="no">K1</span>)
 <span class="no">beta2</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0</span>, <span class="no">K2</span>)
 <span class="no">ind</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="no">theta</span> <span class="kw">!=</span><span class="fl">0</span> , <span class="kw">arr.ind</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
 <span class="no">beta1</span>[<span class="no">ind</span>[, <span class="fl">1</span>]] <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="no">s</span>, <span class="fl">1</span>, <span class="fl">2</span>)
 <span class="no">beta2</span>[<span class="no">ind</span>[, <span class="fl">2</span>]] <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="no">s</span>, <span class="fl">1</span>, <span class="fl">2</span>)</pre></body></html></div>
 <p>Finally we can draw the response vector, with a noise level aiming for coefficient of determination of 0.75 on average.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">sigma</span> <span class="kw">&lt;-</span> <span class="fl">3</span>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">sigma</span> <span class="kw">&lt;-</span> <span class="fl">3</span>
 <span class="no">epsilon</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span>(<span class="no">n</span>) * <span class="no">sigma</span>
 <span class="no">mu</span> <span class="kw">&lt;-</span> <span class="fl">3</span>
 <span class="no">y</span> <span class="kw">&lt;-</span> <span class="no">mu</span> + <span class="no">interactions</span> <span class="kw">%*%</span> <span class="fu">as</span>(<span class="no">theta</span>, <span class="st">'sparseVector'</span>) + <span class="no">main_effects_1</span> <span class="kw">%*%</span> <span class="no">beta1</span> + <span class="no">main_effects_2</span> <span class="kw">%*%</span> <span class="no">beta2</span> + <span class="no">epsilon</span>
@@ -207,7 +212,7 @@
 <h2 class="hasAnchor">
 <a href="#adjusting-multiple-hierarchies" class="anchor"></a>Adjusting multiple hierarchies</h2>
 <p>We try to recover the correct levels of compression only from the two original input matrices of predictors and the response vector. The main function <code>sicomore</code> uses by default a Ward criteria for both hierarchical clustering. At each pairs of levels in the hierarchies, a LASSO criterion is used to perform variables selection. Cross-validation is used to tune the sparisty level. All these defaults can be controlled byy the user:</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">res</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/sicomore.html">sicomore</a></span>(
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">res</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/sicomore.html">sicomore</a></span>(
             <span class="kw">y</span>            <span class="kw">=</span> <span class="no">y</span>,            <span class="co"># response vector</span>
             <span class="kw">X.list</span>       <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">X1</span>, <span class="no">X2</span>), <span class="co"># list of matrices of predictors</span>
             <span class="kw">choice</span>      <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"lambda.min"</span>, <span class="st">"lambda.min"</span>),
@@ -217,7 +222,7 @@
 ## Considering hierarchy 1  -  rho-sicomore selection method.
 ## Considering hierarchy 2  -  rho-sicomore selection method.</code></pre>
 <p>We can plot the most striking interactions with the method <code><a href="https://rdrr.io/r/graphics/plot.html">plot()</a></code> and compare with the “true” model:</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">theta_full</span> <span class="kw">&lt;-</span> <span class="no">theta</span>[<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>:<span class="no">K1</span>, <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="no">grp1_ind</span>)), <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>:<span class="no">K2</span>, <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="no">grp2_ind</span>))] <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span>()
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">theta_full</span> <span class="kw">&lt;-</span> <span class="no">theta</span>[<span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>:<span class="no">K1</span>, <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="no">grp1_ind</span>)), <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">1</span>:<span class="no">K2</span>, <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="no">grp2_ind</span>))] <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span>()
 <span class="no">plot_true</span> <span class="kw">&lt;-</span>
   <span class="kw pkg">reshape2</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/melt.html">melt</a></span>(<span class="no">theta_full</span>) <span class="kw">%&gt;%</span>
   <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="no">Var1</span>, <span class="no">Var2</span>, <span class="kw">fill</span><span class="kw">=</span><span class="no">value</span>)) +
@@ -233,18 +238,18 @@
 <h2 class="hasAnchor">
 <a href="#comparison-of-available-options-for-variable-selection" class="anchor"></a>Comparison of available options for variable selection</h2>
 <p>SIComORe includes three alternative methods of selection for prediction of phenotype with grouped correlated structure, on top of the one defined in <span class="citation">Ambroise et al. (<a href="#ref-sicomore">2018</a>)</span>. MLGL (see <span class="citation">Grimonprez (<a href="#ref-grimonprez_PhD">2016</a>)</span>, <span class="citation">Grimonprez et al. (<a href="#ref-mlgl">2019</a>)</span>) and the variant <span class="math inline">\(\rho\)</span>-SIComORe in the spirit of <span class="citation">Park, Hastie, and Tibshirani (<a href="#ref-park">2007</a>)</span>. We try the 3 available options for simultaneously finding and selecting the groups of variables related to the phenotype.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">out_rho</span>      <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/sicomore.html">sicomore</a></span>(<span class="no">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">X1</span>, <span class="no">X2</span>), <span class="kw">selection</span><span class="kw">=</span><span class="st">"rho-sicomore"</span>)
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">out_rho</span>      <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/sicomore.html">sicomore</a></span>(<span class="no">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">X1</span>, <span class="no">X2</span>), <span class="kw">selection</span><span class="kw">=</span><span class="st">"rho-sicomore"</span>)
 <span class="no">out_mlgl</span>     <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/sicomore.html">sicomore</a></span>(<span class="no">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">X1</span>, <span class="no">X2</span>), <span class="kw">selection</span><span class="kw">=</span><span class="st">"mlgl"</span>        )
 <span class="no">out_sicomore</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/sicomore.html">sicomore</a></span>(<span class="no">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">X1</span>, <span class="no">X2</span>), <span class="kw">selection</span><span class="kw">=</span><span class="st">"sicomore"</span>    )</pre></body></html></div>
 <p>In this case, the three method tends to produce a similar estimate of the interaction coefficients:</p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">plot_mlgl</span>     <span class="kw">&lt;-</span> <span class="no">out_mlgl</span>$<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="kw">main</span> <span class="kw">=</span> <span class="st">"Estimated interactions (MLGL)"</span>, <span class="kw">threshold</span><span class="kw">=</span><span class="fl">.05</span>)
+<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">plot_mlgl</span>     <span class="kw">&lt;-</span> <span class="no">out_mlgl</span>$<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="kw">main</span> <span class="kw">=</span> <span class="st">"Estimated interactions (MLGL)"</span>, <span class="kw">threshold</span><span class="kw">=</span><span class="fl">.05</span>)
 <span class="no">plot_sicomore</span> <span class="kw">&lt;-</span> <span class="no">out_sicomore</span>$<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="kw">main</span> <span class="kw">=</span> <span class="st">"Estimated interactions (SICoMORE)"</span>, <span class="kw">threshold</span><span class="kw">=</span><span class="fl">.05</span>)
 <span class="no">plot_rho</span>      <span class="kw">&lt;-</span> <span class="no">out_rho</span>$<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="kw">main</span> <span class="kw">=</span> <span class="st">"Estimated interactions (rho-SICoMORE)"</span>, <span class="kw">threshold</span><span class="kw">=</span><span class="fl">.05</span>)
 <span class="kw pkg">cowplot</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/cowplot/man/plot_grid.html">plot_grid</a></span>( <span class="no">plot_mlgl</span>, <span class="no">plot_rho</span>,
                     <span class="no">plot_sicomore</span>, <span class="no">plot_true</span>, <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">2</span>, <span class="kw">nrow</span> <span class="kw">=</span> <span class="fl">2</span>)</pre></body></html></div>
 <p><img src="twoDataInteraction_files/figure-html/plot%20comparison-1.png" width="672"></p>
 <p>The method <code>getSignificance(effect = "beta")</code> sends back the results of a statistical test for each set of coefficients (main effect or interaction) in the form of <span class="math inline">\(1-p\)</span>-value. This can be used to determine at which extend a coefficient is selected (the closer from 1, the higher the probability for being non zero):</p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">pval_mlgl</span>     <span class="kw">&lt;-</span> <span class="fl">1</span> - <span class="no">out_mlgl</span>$<span class="fu">getSignificance</span>(<span class="kw">effect</span> <span class="kw">=</span> <span class="st">"theta"</span>)
+<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">pval_mlgl</span>     <span class="kw">&lt;-</span> <span class="fl">1</span> - <span class="no">out_mlgl</span>$<span class="fu">getSignificance</span>(<span class="kw">effect</span> <span class="kw">=</span> <span class="st">"theta"</span>)
 <span class="no">pval_rho</span>      <span class="kw">&lt;-</span> <span class="fl">1</span> - <span class="no">out_rho</span>$<span class="fu">getSignificance</span>(<span class="kw">effect</span> <span class="kw">=</span> <span class="st">"theta"</span>)
 <span class="no">pval_sicomore</span> <span class="kw">&lt;-</span> <span class="fl">1</span> - <span class="no">out_sicomore</span>$<span class="fu">getSignificance</span>(<span class="kw">effect</span> <span class="kw">=</span> <span class="st">"theta"</span>)
 
@@ -258,11 +263,11 @@
 <h2 class="hasAnchor">
 <a href="#comparison-of-the-computation-times-between-the-3-options" class="anchor"></a>Comparison of the computation times between the 3 options</h2>
 <p>As espected, the SICoMORe variants are much faster than the MLGL one.</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">RHO</span>      <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="../reference/sicomore.html">sicomore</a></span>(<span class="no">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">X1</span>, <span class="no">X2</span>), <span class="kw">selection</span><span class="kw">=</span><span class="st">"rho-sicomore"</span>, <span class="kw">verbose</span><span class="kw">=</span><span class="fl">FALSE</span>))
-<span class="no">SICOMORE</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="../reference/sicomore.html">sicomore</a></span>(<span class="no">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">X1</span>, <span class="no">X2</span>), <span class="kw">selection</span><span class="kw">=</span><span class="st">"sicomore"</span>    , <span class="kw">verbose</span><span class="kw">=</span><span class="fl">FALSE</span>))
-<span class="no">MLGL</span>     <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="../reference/sicomore.html">sicomore</a></span>(<span class="no">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">X1</span>, <span class="no">X2</span>), <span class="kw">selection</span><span class="kw">=</span><span class="st">"mlgl"</span>        , <span class="kw">verbose</span><span class="kw">=</span><span class="fl">FALSE</span>))
+<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="no">RHO</span>      <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="../reference/sicomore.html">sicomore</a></span>(<span class="no">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">X1</span>, <span class="no">X2</span>), <span class="kw">selection</span><span class="kw">=</span><span class="st">"rho-sicomore"</span>, <span class="kw">verbose</span><span class="kw">=</span><span class="fl">FALSE</span>, <span class="kw">mc.cores</span> <span class="kw">=</span> <span class="fl">1</span>))
+<span class="no">SICOMORE</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="../reference/sicomore.html">sicomore</a></span>(<span class="no">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">X1</span>, <span class="no">X2</span>), <span class="kw">selection</span><span class="kw">=</span><span class="st">"sicomore"</span>    , <span class="kw">verbose</span><span class="kw">=</span><span class="fl">FALSE</span>, <span class="kw">mc.cores</span> <span class="kw">=</span> <span class="fl">1</span>))
+<span class="no">MLGL</span>     <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="../reference/sicomore.html">sicomore</a></span>(<span class="no">y</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">X1</span>, <span class="no">X2</span>), <span class="kw">selection</span><span class="kw">=</span><span class="st">"mlgl"</span>        , <span class="kw">verbose</span><span class="kw">=</span><span class="fl">FALSE</span>, <span class="kw">mc.cores</span> <span class="kw">=</span> <span class="fl">1</span>))
 <span class="no">bench</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html">microbenchmark</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/eval.html">eval</a></span>(<span class="no">RHO</span>), <span class="fu"><a href="https://rdrr.io/r/base/eval.html">eval</a></span>(<span class="no">SICOMORE</span>) , <span class="fu"><a href="https://rdrr.io/r/base/eval.html">eval</a></span>(<span class="no">MLGL</span>), <span class="kw">times</span> <span class="kw">=</span> <span class="fl">4</span>)</pre></body></html></div>
-<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu">autoplot</span>(<span class="no">bench</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="fu">autoplot</span>(<span class="no">bench</span>)</pre></body></html></div>
 <p><img src="twoDataInteraction_files/figure-html/timings%20plot-1.png" width="672"></p>
 </div>
 <div id="references" class="section level2 unnumbered">
@@ -282,6 +287,12 @@
 <p>Park, Mee Young, Trevor Hastie, and Robert Tibshirani. 2007. “Averaged Gene Expressions for Regression.” <em>Biostatistics</em> 8 (2): 212–27.</p>
 </div>
 </div>
+</div>
+<div class="footnotes">
+<hr>
+<ol>
+<li id="fn1"><p>This will avoid using all core available <a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol>
 </div>
   </div>
 

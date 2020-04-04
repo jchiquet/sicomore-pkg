@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sicomore</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.1-9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2-9000</span>
       </span>
     </div>
 
@@ -60,7 +60,10 @@
       <a href="../articles/singleData.html">Analysis of a single data set</a>
     </li>
     <li>
-      <a href="../articles/twoDataInteraction.html">Analysis of two onteracting data sets</a>
+      <a href="../articles/twoDataInteraction.html">Analysis of two interacting data sets</a>
+    </li>
+    <li>
+      <a href="../articles/twoDataInteraction.html">Analysis of the MEtaRhizosphere data</a>
     </li>
   </ul>
 </li>
@@ -92,7 +95,7 @@
             <h3 class="subtitle">Finding a relevant group structure to predict a phenotype</h3>
                         <h4 class="author">SIComORe team</h4>
             
-            <h4 class="date">2020-03-26</h4>
+            <h4 class="date">2020-04-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jchiquet/sicomore-pkg/blob/master/vignettes/singleData.Rmd"><code>vignettes/singleData.Rmd</code></a></small>
       <div class="hidden name"><code>singleData.Rmd</code></div>
@@ -192,9 +195,9 @@
 <h3 class="hasAnchor">
 <a href="#variable-selection-along-the-hierarchy" class="anchor"></a>Variable selection along the hierarchy</h3>
 <p>SIComORe also includes three alternative methods of selection for prediction of phenotype with grouped correlated structure, on top of the one defined in <span class="citation">Ambroise et al. (<a href="#ref-sicomore">2018</a>)</span>. MLGL (see <span class="citation">Grimonprez (<a href="#ref-grimonprez_PhD">2016</a>)</span>, <span class="citation">Grimonprez et al. (<a href="#ref-mlgl">2019</a>)</span>) and the variant <span class="math inline">\(\rho\)</span>-SIComORe in the spirit of <span class="citation">Park, Hastie, and Tibshirani (<a href="#ref-park">2007</a>)</span>. We try the 3 available options for simultaneously finding and selecting the groups of variables related to the phenotype:</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">out_rho</span>      <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"rho-sicomore"</span>, <span class="kw">mc.cores</span><span class="kw">=</span><span class="kw">NULL</span>)
-<span class="no">out_mlgl</span>     <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"mlgl"</span>        , <span class="kw">mc.cores</span><span class="kw">=</span><span class="kw">NULL</span>)
-<span class="no">out_sicomore</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"sicomore"</span>    , <span class="kw">mc.cores</span><span class="kw">=</span><span class="kw">NULL</span>)
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">out_rho</span>      <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"rho-sicomore"</span>, <span class="kw">mc.cores</span><span class="kw">=</span><span class="fl">1</span>)
+<span class="no">out_mlgl</span>     <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"mlgl"</span>        , <span class="kw">mc.cores</span><span class="kw">=</span><span class="fl">1</span>)
+<span class="no">out_sicomore</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"sicomore"</span>    , <span class="kw">mc.cores</span><span class="kw">=</span><span class="fl">1</span>)
 <span class="no">all_res</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(
   <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="no">out_rho</span>$<span class="no">cv.error</span>     , <span class="kw">method</span><span class="kw">=</span><span class="st">"rho-sicomore"</span>),
   <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="no">out_sicomore</span>$<span class="no">cv.error</span>, <span class="kw">method</span><span class="kw">=</span><span class="st">"sicomore"</span>),
@@ -228,9 +231,9 @@
 <div id="comparison-of-the-computation-times-between-the-3-options" class="section level2">
 <h2 class="hasAnchor">
 <a href="#comparison-of-the-computation-times-between-the-3-options" class="anchor"></a>Comparison of the computation times between the 3 options</h2>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">RHO</span>      <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"rho-sicomore"</span>, <span class="kw">mc.cores</span><span class="kw">=</span><span class="kw">NULL</span>))
-<span class="no">SICOMORE</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"sicomore"</span>    , <span class="kw">mc.cores</span><span class="kw">=</span><span class="kw">NULL</span>))
-<span class="no">MLGL</span>     <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"mlgl"</span>        , <span class="kw">mc.cores</span><span class="kw">=</span><span class="kw">NULL</span>))
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">RHO</span>      <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"rho-sicomore"</span>))
+<span class="no">SICOMORE</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"sicomore"</span>    ))
+<span class="no">MLGL</span>     <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="../reference/getHierLevel.html">getHierLevel</a></span>(<span class="no">X</span>, <span class="no">y</span>, <span class="no">hierarchy</span>, <span class="kw">choice</span><span class="kw">=</span><span class="st">"lambda.1se"</span>, <span class="kw">selection</span><span class="kw">=</span><span class="st">"mlgl"</span>        ))
 <span class="no">bench</span>    <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/microbenchmark/man/microbenchmark.html">microbenchmark</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/eval.html">eval</a></span>(<span class="no">RHO</span>), <span class="fu"><a href="https://rdrr.io/r/base/eval.html">eval</a></span>(<span class="no">SICOMORE</span>) , <span class="fu"><a href="https://rdrr.io/r/base/eval.html">eval</a></span>(<span class="no">MLGL</span>), <span class="kw">times</span> <span class="kw">=</span> <span class="fl">4</span>)</pre></body></html></div>
 <div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu">autoplot</span>(<span class="no">bench</span>)</pre></body></html></div>
 <p><img src="singleData_files/figure-html/unnamed-chunk-2-1.png" width="672"></p>
