@@ -43,6 +43,11 @@ library(reshape2)
 library(cowplot)
 ```
 
+We also fix the number of cores to a predefined value^[This will avoid using all core available  ]
+```{r cores}
+nb_cores <- 2
+```
+
 
 ## Statistical Model
 
@@ -214,9 +219,9 @@ hist(pval_rho     , main = "p-values rho-SIComORe")
 As espected, the SICoMORe variants are much faster than the MLGL one.
 
 ```{r timings, message=FALSE, warning=FALSE}
-RHO      <- expression(sicomore(y, list(X1, X2), selection="rho-sicomore", verbose=FALSE))
-SICOMORE <- expression(sicomore(y, list(X1, X2), selection="sicomore"    , verbose=FALSE))
-MLGL     <- expression(sicomore(y, list(X1, X2), selection="mlgl"        , verbose=FALSE))
+RHO      <- expression(sicomore(y, list(X1, X2), selection="rho-sicomore", verbose=FALSE, mc.cores = 1))
+SICOMORE <- expression(sicomore(y, list(X1, X2), selection="sicomore"    , verbose=FALSE, mc.cores = 1))
+MLGL     <- expression(sicomore(y, list(X1, X2), selection="mlgl"        , verbose=FALSE, mc.cores = 1))
 bench    <- microbenchmark(eval(RHO), eval(SICOMORE) , eval(MLGL), times = 4)
 ```
 

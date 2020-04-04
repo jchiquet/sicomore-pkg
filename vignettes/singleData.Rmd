@@ -135,9 +135,9 @@ plot(hierarchy, main = "Hierarchical clustering on the input matrix of predictor
 SIComORe also includes three alternative methods of selection for prediction of phenotype with grouped correlated structure, on top of the one defined in @sicomore. MLGL (see @grimonprez_PhD, @mlgl) and the variant $\rho$-SIComORe in the spirit of @park. We try the 3 available options for simultaneously finding and selecting the groups of variables related to the phenotype:
 
 ```{r sim res}
-out_rho      <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="rho-sicomore", mc.cores=NULL)
-out_mlgl     <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="mlgl"        , mc.cores=NULL)
-out_sicomore <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="sicomore"    , mc.cores=NULL)
+out_rho      <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="rho-sicomore", mc.cores=1)
+out_mlgl     <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="mlgl"        , mc.cores=1)
+out_sicomore <- getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="sicomore"    , mc.cores=1)
 all_res <- rbind(
   cbind(out_rho$cv.error     , method="rho-sicomore"),
   cbind(out_sicomore$cv.error, method="sicomore"),
@@ -162,9 +162,9 @@ out_rho$getGrp()
 ## Comparison of the computation times between the 3 options
 
 ```{r timings, message=FALSE, warning=FALSE}
-RHO      <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="rho-sicomore", mc.cores=NULL))
-SICOMORE <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="sicomore"    , mc.cores=NULL))
-MLGL     <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="mlgl"        , mc.cores=NULL))
+RHO      <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="rho-sicomore"))
+SICOMORE <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="sicomore"    ))
+MLGL     <- expression(getHierLevel(X, y, hierarchy, choice="lambda.1se", selection="mlgl"        ))
 bench    <- microbenchmark(eval(RHO), eval(SICOMORE) , eval(MLGL), times = 4)
 ```
 

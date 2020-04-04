@@ -107,7 +107,7 @@ sicomore <- function(y,
                            X.comp = X.list[[i]][,groups],
                            probs = stab.lasso$max)
       } else{
-        cv <- cv.glmnet(X.list[[i]], y, parallel=!is.null(mc.cores))
+        cv <- cv.glmnet(X.list[[i]], y, parallel=FALSE)
         groups <- predict(cv, s=choice[i], type="nonzero")[[1]]
         coefficients <- predict(cv, s=choice[i], type="coefficients")[-1] # without intercept
         coefficients <- coefficients[groups]
@@ -152,7 +152,7 @@ sicomore <- function(y,
           group.select[which(duplicated(group.select))] <- NULL
           probs <- stab.lasso$max
         } else {
-          cv <- cv.glmnet(Xcomp, y, parallel=!is.null(mc.cores))
+          cv <- cv.glmnet(Xcomp, y, parallel=FALSE)
           sel <- predict(cv, s=choice[i], type="nonzero")[[1]]
           group.select <- group.name[sel]
           sel <- sel[-which(duplicated(group.select))]  ## Remove duplicated species

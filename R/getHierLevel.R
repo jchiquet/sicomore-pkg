@@ -46,7 +46,7 @@ getHierLevel <- function(X,
                          compression = "mean",
                          depth.cut = 3,
                          choice=c("lambda.min", "lambda.1se"),
-                         mc.cores=NULL,
+                         mc.cores=2,
                          stab = FALSE,
                          stab.param = list(B = c(100,100), cutoff = c(.75,.75), PFER = c(1,1))) {
 
@@ -147,7 +147,7 @@ getHierLevel <- function(X,
     groups <- Xcomp.variables[selected.groups]   # elements of each group of the best model
     res <- list(groups = groups)
   } else {
-    cv <- glmnet::cv.glmnet(Xcomp, y, penalty.factor = penalty.factor, parallel=!is.null(mc.cores))
+    cv <- glmnet::cv.glmnet(Xcomp, y, penalty.factor = penalty.factor, parallel=FALSE)
     selected.groups <- predict(cv, s=choice, type="nonzero")[[1]]
     groups <- Xcomp.variables[selected.groups]   # elements of each group of the best model
     coefficients <- predict(cv, s=choice, type="coefficients")[-1] # without intercept

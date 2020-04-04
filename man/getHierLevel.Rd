@@ -12,7 +12,7 @@ getHierLevel(
   compression = "mean",
   depth.cut = 3,
   choice = c("lambda.min", "lambda.1se"),
-  mc.cores = NULL,
+  mc.cores = 2,
   stab = FALSE,
   stab.param = list(B = c(100, 100), cutoff = c(0.75, 0.75), PFER = c(1, 1))
 )
